@@ -32,6 +32,8 @@ public class EntitySystem {
         for (int i : entities.keySet()){
             if(!entities.get(i).alive){
                 player.killed = entities.get(i);
+                entities.remove(i);
+                continue;
             }
             if(player.hitMob(entities.get(i)) && entities.get(i).alive){
                 entities.get(i).appliedDamage = player.currentWeapon.damage;

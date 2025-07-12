@@ -1,6 +1,5 @@
 package rune.editor.entity;
 
-import com.artemis.managers.UuidEntityManager;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -8,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import org.luaj.vm2.ast.Str;
 import rune.editor.Player;
 import rune.editor.Renderer;
 import rune.editor.data.GameData;
@@ -59,7 +57,7 @@ public class Slime extends Entity implements MobIface {
     public static Slime Green(){
         return new Slime("green");
     }
-
+    public static Slime Purple(){return new Slime("purple");}
     @Override
     public void draw(Renderer renderer, float dt){
         stateTime += Gdx.graphics.getDeltaTime(); if(stateTime > 10) stateTime = 0;

@@ -172,14 +172,19 @@ public class Player {
         delta += Gdx.graphics.getDeltaTime();  if(delta > 10) delta = 0;
         update(dt);
         if(isMelee){
-            renderer.sb.draw(shadow, pos.x + 16f, pos.y, 15,16);
+            final float shadowXDisplaced = pos.x + 16f;
+            renderer.sb.draw(shadow, shadowXDisplaced, pos.y, shadow.getWidth() - 1,shadow.getHeight());
             renderer.sb.draw(getMeleeAnim(delta).getKeyFrame(delta, isMelee), pos.x, pos.y);
+
             if(getMeleeAnim(delta).isAnimationFinished(delta)){
                 isMelee = false;
                 hitEntities.clear();
             }
+
         }else {
-            renderer.sb.draw(shadow, pos.x + 8.8f, pos.y - 4, 15, 16);
+            final float shadowX = pos.x + 8.8f;
+            final float shadowY = pos.y - 4;
+            renderer.sb.draw(shadow, shadowX, shadowY,shadow.getWidth() - 1 ,shadow.getHeight());
             renderer.sb.draw(getAnim(delta).getKeyFrame(delta, isMoving), pos.x, pos.y);
         }
 

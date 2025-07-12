@@ -1,9 +1,7 @@
-package rune.editor.scripts;
+package rune.editor.objects;
 
 import com.badlogic.gdx.math.MathUtils;
 import rune.editor.entity.Entity;
-import rune.editor.objects.Item;
-import rune.editor.objects.Items;
 
 public class ItemDrops {
 

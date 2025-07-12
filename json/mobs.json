@@ -14,6 +14,12 @@
     "damage": 20,
     "speed":  55,
     "rarity": "COMMON"},
+  {"name": "purple_slime",
+    "health": 80,
+    "damage": 30,
+    "speed": 65,
+    "rarity": "UNCOMMON"
+  },
   {"name": "skeleton",
     "health": 80,
     "damage": 25,

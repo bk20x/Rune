@@ -17,6 +17,7 @@ public class Interop {
 
     private final ExternalLoader loader;
     private final Lua lua = new Lua54();
+
     public Interop() {
          loader = (name, lua) -> {
              try {

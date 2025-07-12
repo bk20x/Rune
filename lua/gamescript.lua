@@ -38,7 +38,7 @@ local r = Renderer:New()
 
 
 local function random()
-    local ents = { Mobs:BlueSlime(), Mobs:GreenSlime(), Mobs:BlueSlime(),Mobs:OrangeSlime() }
+    local ents = { Mobs:BlueSlime(), Mobs:GreenSlime(), Mobs:BlueSlime(),Mobs:OrangeSlime(), Mobs:PurpleSlime(), Mobs:PurpleSlime() }
     for key, entity in pairs(ents) do
         entity:setDirection(Direction:Random())
         entity:setPos(math.random(0,1280 - 32),math.random(0,1280 - 32))
@@ -58,10 +58,10 @@ local function zoom()
 end
 
 local function update()
-    if world.scene.entitySystem:size() == 0 then
-          for i = 1, 15, 1 do
+    if world.scene.entitySystem:size() < 10 then
+          for i = 1, 8, 1 do
              for k, e in pairs(random())do
-                            world:addEntity(e)
+                 world:addEntity(e)
             end
         end
     end

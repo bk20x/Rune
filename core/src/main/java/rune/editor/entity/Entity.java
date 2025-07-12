@@ -200,7 +200,7 @@ public class Entity implements MobIface,Cloneable {
 
     @Override
     public Entity clone(){
-        Entity clone = this;
-        return clone;
+        return this;
     }
+
 }

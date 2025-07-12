@@ -10,6 +10,8 @@ public class Mobs {
     public static Entity OrangeSlime(){return Slime.Orange();}
     public static Entity GreenSlime(){return Slime.Green();}
     public static Entity BlueSlime(){return Slime.Blue();}
+    public static Entity PurpleSlime(){return Slime.Purple();}
+
 
     public static Entity Skeleton(){return Entity.mob("skeleton");}
 
