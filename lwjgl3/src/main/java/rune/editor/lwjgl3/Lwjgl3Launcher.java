@@ -11,7 +11,7 @@ public class Lwjgl3Launcher {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
         createApplication();
     }
-    public static PlatformInterface platformInterface = new Lwjgl3PlatformInterface();
+
 
     private static Lwjgl3Application createApplication() {
         return new Lwjgl3Application(new State(), getDefaultConfiguration());
