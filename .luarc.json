@@ -1,0 +1,14 @@
+{
+    "diagnostics.globals": [
+        "java",
+        "entities",
+        "import",
+        "entitySystem",
+        "newVec2",
+        "newSpriteBatch",
+        "keyDown",
+        "newRect",
+        "draw",
+        "keyDownOnce"
+    ]
+}

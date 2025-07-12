@@ -1,0 +1,23 @@
+[
+  {"name": "bloody_mace",
+    "rarity": "COMMON",
+    "type": "WEAPON",
+    "damage": 10
+  },
+  {"name": "drained_hero_sword",
+    "rarity": "UNIQUE",
+    "type": "WEAPON",
+    "damage": 20
+  },
+  {"name": "hero_sword",
+    "rarity": "UNIQUE",
+    "type": "WEAPON",
+    "damage": 80
+  },
+  {"name": "health_potion",
+    "rarity": "COMMON",
+    "type": "POTION",
+    "effect":"health:15"
+  }
+
+]
