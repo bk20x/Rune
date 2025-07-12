@@ -15,19 +15,17 @@ import rune.editor.data.GameData;
 import rune.editor.types.DIRECTION;
 import rune.editor.types.EntityTypes;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.http.HttpRequest;
-import java.util.UUID;
+
 
 public class Slime extends Entity implements MobIface {
 
-    private Animation<TextureRegion> north;
-    private Animation<TextureRegion> east;
-    private Animation<TextureRegion> west;
-    private Animation<TextureRegion> south;
-    private TextureRegion[] regions;
-    private TextureRegion[] altRegions;
+    private final Animation<TextureRegion> north;
+    private final Animation<TextureRegion> east;
+    private final Animation<TextureRegion> west;
+    private final Animation<TextureRegion> south;
+    private Animation<TextureRegion> hurtAnim;
+    private final TextureRegion[] regions;
+    private final TextureRegion[] altRegions;
 
     private Texture shadow;
     public Slime(String color){
@@ -151,8 +149,7 @@ public class Slime extends Entity implements MobIface {
     }
 
     @Override
-    public Slime clone(){
-        Slime clone = this;
-        return clone;
+    public Slime clone() {
+        return this;
     }
 }
