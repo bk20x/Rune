@@ -1,5 +1,6 @@
 package rune.editor.data;
 
+import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -76,13 +77,38 @@ public class GameData {
         }
 
     }
+    public static void loadPlayerStats(Player player){
 
+            JsonObject obj = objFromFile("json/player/player.json", JsonObject.class);
+
+
+
+    }
     public static void loadPlayerSaveFile(Player player){
         JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
-        player.experience = playerData.get("experience").getAsFloat();
+        String name = playerData.get("name").getAsString();
+        float experience = playerData.get("experience").getAsFloat();
+        int charisma = playerData.get("skills").getAsJsonObject().get("charisma").getAsInt();
+        int strength = playerData.get("skills").getAsJsonObject().get("strength").getAsInt();
+        int intelligence = playerData.get("skills").getAsJsonObject().get("intelligence").getAsInt();
+        int luck = playerData.get("skills").getAsJsonObject().get("luck").getAsInt();
+        String currentWeapon = playerData.get("current_weapon").getAsString();
+
+        player.name = name;
+        player.experience = experience;
         player.pos.x = playerData.get("pos_x").getAsFloat();
         player.pos.y = playerData.get("pos_y").getAsFloat();
-        player.currentWeapon = player.inventory.getItem(playerData.get("current_weapon").getAsString());
+        if (currentWeapon != null && !currentWeapon.isEmpty()) {
+            player.currentWeapon = player.inventory.getItem(playerData.get("current_weapon").getAsString());
+            player.isWeaponEquipped = true;
+        }
+        player.attributeLevels.put("charisma",charisma);
+        player.attributeLevels.put("strength",strength);
+        player.attributeLevels.put("intelligence",intelligence);
+        player.attributeLevels.put("luck",luck);
+
+
+
     }
 
     public static void loadPlayerQuests(Player player){

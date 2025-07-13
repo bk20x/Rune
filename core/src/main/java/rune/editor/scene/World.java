@@ -9,6 +9,8 @@ import rune.editor.entity.Entity;
 import rune.editor.maps.DungeonMap;
 
 
+
+
 public class World {
 
 
@@ -58,7 +60,6 @@ public class World {
 
     public void render(@NotNull Renderer renderer, float dt){
         renderer.start();
-
         if(isSceneActive){
             if(player.isMelee) {
                 scene.entitySystem.battle(player);

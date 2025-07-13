@@ -23,6 +23,7 @@ import java.util.Vector;
 
 import static rune.editor.State.keyBinds;
 import static rune.editor.data.GameData.loadPlayerQuests;
+import static rune.editor.data.GameData.loadPlayerSaveFile;
 import static rune.editor.types.DIRECTION.EAST;
 import static rune.editor.types.DIRECTION.WEST;
 
@@ -33,7 +34,7 @@ public class Player {
     private final Texture textureSheet;
     private final Texture meleeSheet;
     private final Texture shadow;
-    private final HashMap<String,Integer> attributeLevels = new HashMap<>();
+    public final HashMap<String,Integer> attributeLevels = new HashMap<>();
     {
         attributeLevels.put("strength", 10);
         attributeLevels.put("intelligence", 10);
@@ -54,7 +55,7 @@ public class Player {
     public ArrayList<Quest> quests;
     public Quest activeQuest;
     public Entity killed;
-
+    public String name;
 
     private final ArrayList<Integer> hitEntities = new ArrayList<>();
 
@@ -75,7 +76,7 @@ public class Player {
 
         addQuest(new IntroQuest());
         setActiveQuest(quests.get(0));
-
+        
 
     }
 
