@@ -14,6 +14,7 @@ import rune.editor.Player;
 import rune.editor.npc.Npc;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
+import rune.editor.objects.Items;
 import rune.editor.quest.Quest;
 import rune.editor.types.ItemTypes;
 import rune.editor.types.NpcTypes;
@@ -85,28 +86,34 @@ public class GameData {
 
     }
     public static void loadPlayerSaveFile(Player player){
-        JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
-        String name = playerData.get("name").getAsString();
-        float experience = playerData.get("experience").getAsFloat();
-        int charisma = playerData.get("skills").getAsJsonObject().get("charisma").getAsInt();
-        int strength = playerData.get("skills").getAsJsonObject().get("strength").getAsInt();
-        int intelligence = playerData.get("skills").getAsJsonObject().get("intelligence").getAsInt();
-        int luck = playerData.get("skills").getAsJsonObject().get("luck").getAsInt();
-        String currentWeapon = playerData.get("current_weapon").getAsString();
+        try {
 
-        player.name = name;
-        player.experience = experience;
-        player.pos.x = playerData.get("pos_x").getAsFloat();
-        player.pos.y = playerData.get("pos_y").getAsFloat();
-        if (currentWeapon != null && !currentWeapon.isEmpty()) {
-            player.currentWeapon = player.inventory.getItem(playerData.get("current_weapon").getAsString());
-            player.isWeaponEquipped = true;
+
+            JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
+            String name = playerData.get("name").getAsString();
+            float experience = playerData.get("experience").getAsFloat();
+            int charisma = playerData.get("skills").getAsJsonObject().get("charisma").getAsInt();
+            int strength = playerData.get("skills").getAsJsonObject().get("strength").getAsInt();
+            int intelligence = playerData.get("skills").getAsJsonObject().get("intelligence").getAsInt();
+            int luck = playerData.get("skills").getAsJsonObject().get("luck").getAsInt();
+            String currentWeapon = playerData.get("current_weapon").getAsString();
+
+            player.name = name;
+            player.experience = experience;
+            player.pos.x = playerData.get("pos_x").getAsFloat();
+            player.pos.y = playerData.get("pos_y").getAsFloat();
+            if (currentWeapon != null && !currentWeapon.isEmpty()) {
+
+                player.currentWeapon = Items.weapon(playerData.get("current_weapon").getAsString()); //Items.weapon() for testing, this will check the future inventory file for the item and set the current weapon based on that
+                player.isWeaponEquipped = true;
+            }
+            player.attributeLevels.put("charisma", charisma);
+            player.attributeLevels.put("strength", strength);
+            player.attributeLevels.put("intelligence", intelligence);
+            player.attributeLevels.put("luck", luck);
+        } catch ( RuntimeException e2) {
+            System.err.println("Player save file is corrupt");
         }
-        player.attributeLevels.put("charisma",charisma);
-        player.attributeLevels.put("strength",strength);
-        player.attributeLevels.put("intelligence",intelligence);
-        player.attributeLevels.put("luck",luck);
-
 
 
     }
