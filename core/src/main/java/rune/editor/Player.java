@@ -18,9 +18,11 @@ import rune.editor.types.DIRECTION;
 
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Vector;
 
 import static rune.editor.State.keyBinds;
+import static rune.editor.data.GameData.loadPlayerQuests;
 import static rune.editor.types.DIRECTION.EAST;
 import static rune.editor.types.DIRECTION.WEST;
 
@@ -31,6 +33,13 @@ public class Player {
     private final Texture textureSheet;
     private final Texture meleeSheet;
     private final Texture shadow;
+    private final HashMap<String,Integer> attributeLevels = new HashMap<>();
+    {
+        attributeLevels.put("strength", 10);
+        attributeLevels.put("intelligence", 10);
+        attributeLevels.put("charisma", 10);
+        attributeLevels.put("luck",10);
+    }
     private TextureRegion[] textureFrames;
     public Vector2 pos;
     public DIRECTION direction;
@@ -47,7 +56,7 @@ public class Player {
     public Entity killed;
 
 
-    private ArrayList<Integer> hitEntities = new ArrayList<>();
+    private final ArrayList<Integer> hitEntities = new ArrayList<>();
 
     public Item currentWeapon;
     public Player(){
@@ -66,6 +75,8 @@ public class Player {
 
         addQuest(new IntroQuest());
         setActiveQuest(quests.get(0));
+
+
     }
 
     private void input(float dt){

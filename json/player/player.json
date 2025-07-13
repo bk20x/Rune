@@ -1,14 +1,6 @@
-{"name": "fagen",
-
-
-
-
+{"name": "bk20",
   "skills": {"strength": 10,
               "intelligence": 10,
               "charisma": 10,
-               "luck": 10}
-
-
-
-
-}
+              "luck": 10}
+              }

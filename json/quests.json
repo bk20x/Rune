@@ -5,7 +5,8 @@
     "rarity": "COMMON",
     "objective": "Kill 5 slimes",
     "rewards": "bloody_mace:1; exp:100;",
-    "script": "lua/quests/intro.lua"
+    "journal_entries": ["bobensaben", "narnenfooben"],
+    "complete": false
   }
 
 

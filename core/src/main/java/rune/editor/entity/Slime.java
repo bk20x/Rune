@@ -45,7 +45,7 @@ public class Slime extends Entity implements MobIface {
         south = new Animation<TextureRegion>(0.30f, regions[0], regions[1], regions[2]);
 
         this.shadow = new Texture("shadow.png");
-        this.range = new Circle(pos.x,pos.y,regions[0].getRegionWidth());
+        this.range = new Circle(pos.x,pos.y,regions[0].getRegionWidth() * 2);
     }
 
     public static Slime Blue(){

@@ -5,8 +5,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kotlin._Assertions;
+import net.dermetfan.gdx.physics.box2d.PositionController;
 import net.dermetfan.utils.Pair;
 import org.jetbrains.annotations.Nullable;
+import org.luaj.vm2.ast.Str;
+import rune.editor.Player;
 import rune.editor.npc.Npc;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
@@ -17,6 +20,7 @@ import rune.editor.types.Rarity;
 
 import java.io.FileReader;
 import java.io.Reader;
+import java.util.Arrays;
 
 public class GameData {
 
@@ -73,7 +77,29 @@ public class GameData {
 
     }
 
+    public static void loadPlayerSaveFile(Player player){
+        JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
+        player.experience = playerData.get("experience").getAsFloat();
+        player.pos.x = playerData.get("pos_x").getAsFloat();
+        player.pos.y = playerData.get("pos_y").getAsFloat();
+        player.currentWeapon = player.inventory.getItem(playerData.get("current_weapon").getAsString());
+    }
 
+    public static void loadPlayerQuests(Player player){
+        Quest quest = null;
+        for (JsonElement element : arrayFromFile("json/player/active_quests.json")) {
+            JsonObject questData = element.getAsJsonObject();
+            quest = new Quest(questData.getAsJsonObject().get("name").getAsString());
+            quest.complete = questData.get("complete").getAsBoolean();
+            for (JsonElement entry : questData.get("journal_entries").getAsJsonArray().asList()) {
+                quest.journalEntries.add(entry.getAsString());
+            }
+
+        }
+        if(quest != null) {
+            player.quests.add(quest);
+        }
+    }
 
     @Deprecated
     @Nullable
