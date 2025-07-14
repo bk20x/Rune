@@ -80,9 +80,15 @@ public class GameData {
     }
     public static void loadPlayerStats(Player player){
 
-            JsonObject obj = objFromFile("json/player/player.json", JsonObject.class);
-
-
+        JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
+        int charisma = playerData.get("skills").getAsJsonObject().get("charisma").getAsInt();
+        int strength = playerData.get("skills").getAsJsonObject().get("strength").getAsInt();
+        int intelligence = playerData.get("skills").getAsJsonObject().get("intelligence").getAsInt();
+        int luck = playerData.get("skills").getAsJsonObject().get("luck").getAsInt();
+        player.attributeLevels.put("charisma", charisma);
+        player.attributeLevels.put("strength", strength);
+        player.attributeLevels.put("intelligence", intelligence);
+        player.attributeLevels.put("luck", luck);
 
     }
     public static void loadPlayerSaveFile(Player player){
@@ -90,48 +96,49 @@ public class GameData {
 
 
             JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
+
             String name = playerData.get("name").getAsString();
             float experience = playerData.get("experience").getAsFloat();
-            int charisma = playerData.get("skills").getAsJsonObject().get("charisma").getAsInt();
-            int strength = playerData.get("skills").getAsJsonObject().get("strength").getAsInt();
-            int intelligence = playerData.get("skills").getAsJsonObject().get("intelligence").getAsInt();
-            int luck = playerData.get("skills").getAsJsonObject().get("luck").getAsInt();
+
             String currentWeapon = playerData.get("current_weapon").getAsString();
 
             player.name = name;
             player.experience = experience;
             player.pos.x = playerData.get("pos_x").getAsFloat();
             player.pos.y = playerData.get("pos_y").getAsFloat();
+
             if (currentWeapon != null && !currentWeapon.isEmpty()) {
 
                 player.currentWeapon = Items.weapon(playerData.get("current_weapon").getAsString()); //Items.weapon() for testing, this will check the future inventory file for the item and set the current weapon based on that
                 player.isWeaponEquipped = true;
+
             }
-            player.attributeLevels.put("charisma", charisma);
-            player.attributeLevels.put("strength", strength);
-            player.attributeLevels.put("intelligence", intelligence);
-            player.attributeLevels.put("luck", luck);
-        } catch ( RuntimeException e2) {
-            System.err.println("Player save file is corrupt");
+
+            loadPlayerStats(player);
+
+        } catch ( RuntimeException e ){
+            System.err.println("Error parsing save file: " + e);
         }
 
 
     }
 
     public static void loadPlayerQuests(Player player){
-        Quest quest = null;
-        for (JsonElement element : arrayFromFile("json/player/active_quests.json")) {
+        for (JsonElement element : arrayFromFile("json/player/journal.json")){
             JsonObject questData = element.getAsJsonObject();
-            quest = new Quest(questData.getAsJsonObject().get("name").getAsString());
+            final Quest quest = new Quest(questData.get("quest").getAsString());
             quest.complete = questData.get("complete").getAsBoolean();
-            for (JsonElement entry : questData.get("journal_entries").getAsJsonArray().asList()) {
-                quest.journalEntries.add(entry.getAsString());
+            for (JsonElement entry : questData.getAsJsonArray("entries")) {
+                quest.journalEntries.put(entry.getAsJsonObject().get("date").getAsString(), entry.getAsJsonObject().get("entry").getAsString());
+                System.out.println(quest.journalEntries);
+                player.quests.add(quest);
             }
 
         }
-        if(quest != null) {
-            player.quests.add(quest);
-        }
+
+
+
+
     }
 
     @Deprecated

@@ -77,7 +77,7 @@ public class Player {
         addQuest(new IntroQuest());
         setActiveQuest(quests.get(0));
         loadPlayerSaveFile(this);
-
+        loadPlayerQuests(this);
     }
 
     private void input(float dt){

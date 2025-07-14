@@ -8,6 +8,7 @@ import rune.editor.objects.Items;
 import rune.editor.types.Rarity;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 
 public class Quest {
@@ -18,7 +19,7 @@ public class Quest {
     public String[] rewards;
     public String objective;
 
-    public ArrayList<String> journalEntries;
+    public HashMap<String, String> journalEntries;
     public String script;
 
     public boolean complete = false;
@@ -28,7 +29,7 @@ public class Quest {
 
    public Quest(String name){
         this.name = name;
-        this.journalEntries = new ArrayList<>();
+        this.journalEntries = new HashMap<>();
         GameData.setQuestValues(this);
    }
 
