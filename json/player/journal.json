@@ -1,8 +1,7 @@
 [
-  {"quest" : "intro",
+  {"quest" : "lost",
     "complete": false,
-    "entries" : [{"date": "",
-                  "entry" : "I have to find out where everyone is, and whats up with all these slimes..."}
-    ]
+    "entries" : [{"date": "???",
+                  "entry" : "I dont know where i am, the air has a metallic smell."}]
   }
 ]

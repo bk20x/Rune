@@ -7,7 +7,6 @@ import rune.editor.objects.Item;
 import rune.editor.objects.Items;
 import rune.editor.types.Rarity;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 
@@ -43,10 +42,10 @@ public class Quest {
    }
    public void giveRewards(Player player){
         for (String s : rewards){
-            if(s.contains("random")){
+            if(s.contains("Random")){
                 var amount = Integer.parseInt(s.split(":")[1]);
                 for (int i = 0; i < amount; i++) {
-                    player.inventory.addItems(Items.random(rarity));
+                    player.inventory.addItems(Items.Random(rarity));
                 }
             }
             else if(s.contains("exp")){

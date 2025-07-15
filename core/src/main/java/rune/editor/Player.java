@@ -10,7 +10,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
-import rune.editor.quest.IntroQuest;
 import rune.editor.quest.Quest;
 import rune.editor.objects.Items;
 import rune.editor.system.Inventory;
@@ -19,16 +18,13 @@ import rune.editor.types.DIRECTION;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Vector;
 
 import static rune.editor.State.keyBinds;
-import static rune.editor.data.GameData.loadPlayerQuests;
 import static rune.editor.data.GameData.loadPlayerSaveFile;
 import static rune.editor.types.DIRECTION.EAST;
 import static rune.editor.types.DIRECTION.WEST;
 
 public class Player {
-
 
 
     private final Texture textureSheet;
@@ -47,19 +43,22 @@ public class Player {
     public float speed = 100f;
     public float experience;
     private float delta;
-    public boolean isMoving, isMelee,isAlive,isWeaponEquipped;
+    public float health = 100f;
+    public float maxHealth = 100f;
+    public boolean isMoving, isMelee,isAlive = true,isWeaponEquipped;
     public Rectangle bounds = new Rectangle(0,0,32,32);
     public final Inventory inventory = new Inventory();
-
     public Circle range;
+
     public ArrayList<Quest> quests;
+
     public Quest activeQuest;
     public Entity killed;
+
     public String name;
-
     private final ArrayList<Integer> hitEntities = new ArrayList<>();
-
     public Item currentWeapon;
+
     public Player(){
         textureSheet = new Texture("player.png");
         meleeSheet = new Texture("heromelee.png");
@@ -69,15 +68,13 @@ public class Player {
         pos = new Vector2(0,0);
 
         direction = DIRECTION.SOUTH;
-        inventory.addItems(Items.weapon("drained_hero_sword"));
+        inventory.addItems(Items.Weapon("drained_hero_sword"));
 
         quests = new ArrayList<>();
         range = new Circle(pos.x,pos.y,32);
 
-        addQuest(new IntroQuest());
-        setActiveQuest(quests.get(0));
+
         loadPlayerSaveFile(this);
-        loadPlayerQuests(this);
     }
 
     private void input(float dt){
@@ -113,6 +110,8 @@ public class Player {
             equipWeapon("drained_hero_sword");
 
         }
+
+
         if(Gdx.input.isKeyPressed(Input.Keys.F)){
             unequipWeapon();
         }
@@ -146,6 +145,7 @@ public class Player {
                 case NORTH -> {
                     wepRec.set(getX(), getY() + 16, 32,38);
                     if(wepRec.overlaps(mob.bounds)) {
+                        mob.hurt = true;
                         wepRec.set(0,0,0,0);
                         hitEntities.add(mob.id());
                         return true;
@@ -154,6 +154,7 @@ public class Player {
                 case WEST -> {
                     wepRec.set(getX() - 16, getY(),  38,32);
                     if(wepRec.overlaps(mob.bounds)) {
+                        mob.hurt = true;
                         wepRec.set(0,0,0,0);
                         hitEntities.add(mob.id());
                         return true;
@@ -162,6 +163,7 @@ public class Player {
                 case EAST -> {
                     wepRec.set(getX() + 16 , getY(), 38,32);
                     if(wepRec.overlaps(mob.bounds)) {
+                        mob.hurt = true;
                         wepRec.set(0,0,0,0);
                         hitEntities.add(mob.id());
                         return true;
@@ -170,6 +172,7 @@ public class Player {
                 case SOUTH -> {
                     wepRec.set(getX(), getY() - 16, 32,38);
                     if(wepRec.overlaps(mob.bounds)) {
+                        mob.hurt = true;
                         wepRec.set(0,0,0,0);
                         hitEntities.add(mob.id());
                         return true;
@@ -212,7 +215,14 @@ public class Player {
             activeQuest.act(this);
         }
         quests.removeIf(quest -> quest.complete);
+
+        if(!isAlive){die();}
     }
+
+
+
+
+
     private Animation<TextureRegion> getMeleeAnim(float delta){
         textureFrames = TextureRegion.split(meleeSheet, 48, 52)[0];
         return switch (direction){
@@ -221,8 +231,10 @@ public class Player {
             case WEST -> new Animation<>(0.10f, textureFrames[0],textureFrames[5]);
             case EAST -> new Animation<>(0.10f, textureFrames[1],textureFrames[6]);
         };
-
     }
+
+
+
     public Animation<TextureRegion> getAnim(float delta){
         if(direction == EAST || direction == WEST){
             textureFrames = TextureRegion.split(textureSheet, 32, 32)[1];
@@ -249,10 +261,41 @@ public class Player {
         activeQuest = quest;
         State.activeQuest = activeQuest.name;
     }
+
+    private void die(){
+        isMelee = false;
+        isMoving = false;
+        hitEntities.clear();
+
+        if(experience > 0) {
+            experience = Math.max(0, experience - 50);
+        }
+    }
+
     public static Player New(){
         return new Player();
     }
     public void setSpeed(float speed){this.speed = speed;}
     public float getX(){return pos.x;}
     public float getY(){return pos.y;}
+
+    public boolean takeDamage(float damage) {
+        health -= damage;
+
+        if(health <= 0) {
+            health = 0;
+            isAlive = false;
+        }
+
+        return isAlive;
+    }
+    public void addItem(Item i){
+        inventory.addItems(i);
+
+    }
+
+    public void heal(float amount) {
+        health = Math.min(health + amount, maxHealth);
+
+    }
 }

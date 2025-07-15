@@ -2,7 +2,7 @@
 --- Created by Bk.
 --- DateTime: 6/25/2025 1:43 AM
 ---
-require('game')
+require('engine_globals')
 
 
 Game:setKeybind("UP",Keys.W)

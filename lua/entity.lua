@@ -17,6 +17,7 @@ Mobs = import('rune.editor.objects.Mobs')
 ---@type Mobs
 
 
+
 ---@param type ETypes
 ---@return Entity
 function NewEntity(name,type)

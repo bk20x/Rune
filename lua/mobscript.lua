@@ -5,6 +5,3 @@
 require('entity')
 require('lava')
 
-Direction = import('rune.editor.types.DIRECTION')
-
-

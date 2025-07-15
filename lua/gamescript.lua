@@ -4,10 +4,10 @@
 ---
 require('entity')
 require('sceneutils')
-require('game')
 require('math')
-require('mobscript')
-
+require('engine_globals')
+require('items')
+require('game')
 Player = import('rune.editor.Player')
 World = import('rune.editor.scene.World')
 
@@ -25,7 +25,6 @@ local world = World:New()
 
 
 world:setScene(scene) ---setScene sets the active scene in the world, for ex. entering a dungeon switches the scene
-
 world:addPlayer(player) ---important for the player to interact with the scene && the players draw method is called with world:render()
 
 
@@ -38,7 +37,7 @@ local r = Renderer:New()
 
 
 local function random()
-    local ents = { Mobs:BlueSlime(), Mobs:GreenSlime(), Mobs:BlueSlime(),Mobs:OrangeSlime(), Mobs:PurpleSlime(), Mobs:PurpleSlime() }
+    local ents = { Mobs:BlueSlime(), Mobs:GreenSlime(), Mobs:BlueSlime(),Mobs:OrangeSlime() }
     for key, entity in pairs(ents) do
         entity:setDirection(Direction:Random())
         entity:setPos(math.random(0,1280 - 32),math.random(0,1280 - 32))
@@ -56,6 +55,9 @@ local function zoom()
         end
     end
 end
+
+
+
 
 local function update()
     if world.scene.entitySystem:size() < 10 then
@@ -78,7 +80,7 @@ local function update()
     camera:update()
     world:setView(camera)
 end
-
+player:addItem(Items:Random(Rarity.UNIQUE))
 
 function draw()
 local dt = Gdx.graphics:getDeltaTime()

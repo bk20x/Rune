@@ -5,10 +5,6 @@
 require('lava')
 require('sub/gdx_math')
 
-Input = import('com.badlogic.gdx.Gdx').input
-Keys = import('com.badlogic.gdx.Input.Keys')
-Game = import('rune.editor.State')
-Renderer = import('rune.editor.Renderer')
 
 OrthoCam = import('com.badlogic.gdx.graphics.OrthographicCamera')
 ---@alias OrthoCam OrthoCam

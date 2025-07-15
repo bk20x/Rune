@@ -38,7 +38,7 @@ public class Entity implements MobIface,Cloneable {
     public boolean alive = true;
     public boolean moving = false;
     public boolean attacking = false;
-
+    public boolean hurt = false;
     public Animation<TextureRegion> animation;
 
     public Entity(int id){

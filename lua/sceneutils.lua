@@ -7,4 +7,3 @@ require('lava')
 Scene = import('rune.editor.scene.Scene')
 
 Scenes = import('rune.editor.scene.Scenes')
-

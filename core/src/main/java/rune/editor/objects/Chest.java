@@ -30,7 +30,7 @@ public class Chest extends Entity {
 
         this.items = new Vector<>();
         for (int i = 0; i < MathUtils.random(2,7); i++){
-            items.add(Items.random(this.rarity));
+            items.add(Items.Random(this.rarity));
         }
         this.bounds = new Rectangle(0,0,32,32);
 

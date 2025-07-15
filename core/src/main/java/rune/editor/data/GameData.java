@@ -1,15 +1,10 @@
 package rune.editor.data;
 
-import com.badlogic.gdx.utils.Json;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kotlin._Assertions;
-import net.dermetfan.gdx.physics.box2d.PositionController;
-import net.dermetfan.utils.Pair;
 import org.jetbrains.annotations.Nullable;
-import org.luaj.vm2.ast.Str;
 import rune.editor.Player;
 import rune.editor.npc.Npc;
 import rune.editor.entity.Entity;
@@ -22,7 +17,6 @@ import rune.editor.types.Rarity;
 
 import java.io.FileReader;
 import java.io.Reader;
-import java.util.Arrays;
 
 public class GameData {
 
@@ -109,13 +103,12 @@ public class GameData {
 
             if (currentWeapon != null && !currentWeapon.isEmpty()) {
 
-                player.currentWeapon = Items.weapon(playerData.get("current_weapon").getAsString()); //Items.weapon() for testing, this will check the future inventory file for the item and set the current weapon based on that
+                player.currentWeapon = Items.Weapon(playerData.get("current_weapon").getAsString()); //Items.Weapon() for testing, this will check the future inventory file for the item and set the current Weapon based on that
                 player.isWeaponEquipped = true;
 
             }
-
             loadPlayerStats(player);
-
+            loadPlayerQuests(player);
         } catch ( RuntimeException e ){
             System.err.println("Error parsing save file: " + e);
         }
@@ -127,13 +120,13 @@ public class GameData {
         for (JsonElement element : arrayFromFile("json/player/journal.json")){
             JsonObject questData = element.getAsJsonObject();
             final Quest quest = new Quest(questData.get("quest").getAsString());
+            System.out.println(questData.get("quest").getAsString());
             quest.complete = questData.get("complete").getAsBoolean();
             for (JsonElement entry : questData.getAsJsonArray("entries")) {
                 quest.journalEntries.put(entry.getAsJsonObject().get("date").getAsString(), entry.getAsJsonObject().get("entry").getAsString());
-                System.out.println(quest.journalEntries);
+
                 player.quests.add(quest);
             }
-
         }
 
 

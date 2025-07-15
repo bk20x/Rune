@@ -18,5 +18,9 @@
     "rarity": "COMMON",
     "type": "POTION",
     "effect":"health:15"
+  },
+  {"name" : "fagar_dildo",
+    "rarity": "UNIQUE",
+    "type" : "MISC"
   }
 ]

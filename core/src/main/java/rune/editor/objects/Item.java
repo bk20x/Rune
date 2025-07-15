@@ -2,10 +2,12 @@ package rune.editor.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import net.dermetfan.utils.Pair;
-import org.luaj.vm2.ast.Str;
-import rune.editor.data.GameData;
 import rune.editor.types.ItemTypes;
 import rune.editor.types.Rarity;
+
+import javax.swing.text.html.Option;
+import java.io.FileNotFoundException;
+import java.util.Optional;
 
 import static rune.editor.data.GameData.setItemValues;
 
@@ -20,13 +22,13 @@ public class Item {
     public float baseDamage, damage;
     public int amount = 1;
     public Pair<String,Float> effect;
-
+    public Item(){}
 
     public Item(String name, ItemTypes type){
         this.name = name;
         this.type = type;
-        //this.texture = setTextures();
         setItemValues(this);
+        this.texture = getTexture();
         if(type == ItemTypes.WEAPON){
             damage = baseDamage;
         }
@@ -60,6 +62,12 @@ public class Item {
         return new Item(name,type);
     }
 
+    public static Item New(String name){
+        return new Item(name);
+    }
+    public static Item New(){
+        return new Item();
+    }
 
 
     private void setPotionEffect(){
@@ -67,5 +75,12 @@ public class Item {
     }
 
 
-    public Texture setTextures(){return new Texture("items/"+name+".png");}
+    public Texture getTexture(){
+        try {
+             return new Texture("items/"+name+".png");
+        }
+        catch (RuntimeException e){
+            return new Texture("items/" + "generic" + type.toString().toLowerCase() +".png");
+        }
+    }
 }

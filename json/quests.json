@@ -5,8 +5,8 @@
     "rarity": "COMMON",
     "objective": "Kill 5 slimes",
     "rewards": "bloody_mace:1; exp:100;",
-    "journal_entries": ["bobensaben", "narnenfooben"],
-    "complete": false
+    "scenes": [{"location": "MortHarbour Outskirts ;1",
+                "actors": null}]
   }
 
 
