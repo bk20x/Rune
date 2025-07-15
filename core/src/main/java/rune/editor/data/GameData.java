@@ -98,8 +98,8 @@ public class GameData {
 
             player.name = name;
             player.experience = experience;
-            player.pos.x = playerData.get("pos_x").getAsFloat();
-            player.pos.y = playerData.get("pos_y").getAsFloat();
+            player.pos.x = playerData.get("posX").getAsFloat();
+            player.pos.y = playerData.get("posY").getAsFloat();
 
             if (currentWeapon != null && !currentWeapon.isEmpty()) {
 

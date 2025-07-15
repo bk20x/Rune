@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonObject;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
 import rune.editor.quest.Quest;
@@ -75,6 +76,8 @@ public class Player {
 
 
         loadPlayerSaveFile(this);
+
+
     }
 
     private void input(float dt){
@@ -99,11 +102,13 @@ public class Player {
             pos.x += speed * dt;
             direction = EAST;
             isMoving = true;
+            System.out.println(toJson().getAsJsonObject());
         }
 
         if(Gdx.input.isKeyJustPressed(keyBinds.get("MELEE")) && isWeaponEquipped && !isMelee){
             isMelee = true;
             delta = 0;
+
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.B)){
@@ -297,5 +302,33 @@ public class Player {
     public void heal(float amount) {
         health = Math.min(health + amount, maxHealth);
 
+    }
+
+
+
+    public JsonObject toJson(){
+        try {
+            JsonObject json = new JsonObject();
+            JsonObject skills = new JsonObject();
+            skills.addProperty("strength", attributeLevels.get("strength"));
+            skills.addProperty("intelligence", attributeLevels.get("intelligence"));
+            skills.addProperty("charisma", attributeLevels.get("charisma"));
+            skills.addProperty("luck", attributeLevels.get("luck"));
+            json.addProperty("name", name);
+            json.addProperty("posX", pos.x);
+            json.addProperty("posY", pos.y);
+            json.addProperty("health", health);
+            json.addProperty("experience", experience);
+            if (this.currentWeapon != null) {
+                json.addProperty("current_weapon", currentWeapon.name);
+            } else {
+                json.addProperty("current_weapon", "");
+            }
+            json.add("skills", skills);
+            return json;
+        }catch (Exception e){
+            System.err.println("err at toJson() for player");
+        }
+        return new JsonObject();
     }
 }
