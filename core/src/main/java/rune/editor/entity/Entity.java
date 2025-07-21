@@ -114,7 +114,6 @@ public class Entity implements MobIface,Cloneable {
     public void draw(Renderer renderer,float dt){
         update(dt);
 
-        // Increment stateTime but reset more frequently to avoid floating-point precision issues
         stateTime += Gdx.graphics.getDeltaTime();
         if(stateTime > 3) stateTime = 0;
 
