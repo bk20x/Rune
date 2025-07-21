@@ -8,11 +8,12 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
 import rune.editor.quest.Quest;
-import rune.editor.objects.Items;
+import rune.editor.scene.GameState;
 import rune.editor.system.Inventory;
 import rune.editor.types.DIRECTION;
 
@@ -20,7 +21,7 @@ import rune.editor.types.DIRECTION;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import static rune.editor.State.keyBinds;
+import static rune.editor.Game.keyBinds;
 import static rune.editor.data.GameData.loadPlayerSaveFile;
 import static rune.editor.types.DIRECTION.EAST;
 import static rune.editor.types.DIRECTION.WEST;
@@ -51,15 +52,19 @@ public class Player {
     public final Inventory inventory = new Inventory();
     public Circle range;
 
-    public ArrayList<Quest> quests;
+    public ArrayList<Quest> activeQuests;
 
     public Quest activeQuest;
-    public Entity killed;
+    public Entity lastEntityKilled;
 
     public String name;
     private final ArrayList<Integer> hitEntities = new ArrayList<>();
     public Item currentWeapon;
-
+    public Item torso;
+    public Item legs;
+    public Item helmet;
+    public Item boots;
+    public Item hands;
     public Player(){
         textureSheet = new Texture("player.png");
         meleeSheet = new Texture("heromelee.png");
@@ -69,15 +74,14 @@ public class Player {
         pos = new Vector2(0,0);
 
         direction = DIRECTION.SOUTH;
-        inventory.addItems(Items.Weapon("drained_hero_sword"));
 
-        quests = new ArrayList<>();
+
+        activeQuests = new ArrayList<>();
         range = new Circle(pos.x,pos.y,32);
 
 
         loadPlayerSaveFile(this);
-
-
+        activeQuest = activeQuests.get(0);
     }
 
     private void input(float dt){
@@ -102,7 +106,6 @@ public class Player {
             pos.x += speed * dt;
             direction = EAST;
             isMoving = true;
-            System.out.println(toJson().getAsJsonObject());
         }
 
         if(Gdx.input.isKeyJustPressed(keyBinds.get("MELEE")) && isWeaponEquipped && !isMelee){
@@ -112,8 +115,8 @@ public class Player {
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.B)){
-            equipWeapon("drained_hero_sword");
-
+            equipWeapon(inventory.getInventory().firstElement());
+            System.out.println(inventory.getInventory().firstElement().name);
         }
 
 
@@ -123,20 +126,7 @@ public class Player {
 
     }
 
-    public void equipWeapon(String weaponName){
-        if(this.inventory.getItem(weaponName) != null){
-            this.currentWeapon = inventory.getItem(weaponName);
-            isWeaponEquipped = true;
-            System.err.println(currentWeapon.name);
-            System.err.println(currentWeapon.damage);
-            System.err.println(currentWeapon.rarity);
-        }
-    }
 
-    public void unequipWeapon(){
-        this.currentWeapon = null;
-        isWeaponEquipped = false;
-    }
     public Rectangle wepRec = new Rectangle(0,0,32,32);
 
     public boolean hitMob(Entity mob){
@@ -219,7 +209,7 @@ public class Player {
         if(activeQuest != null) {
             activeQuest.act(this);
         }
-        quests.removeIf(quest -> quest.complete);
+        activeQuests.removeIf(quest -> quest.complete);
 
         if(!isAlive){die();}
     }
@@ -257,14 +247,14 @@ public class Player {
     public void completeQuest(){
         activeQuest.complete = true;
         activeQuest = null;
-        State.activeQuest = null;
+        GameState.activeQuest = null;
     }
     public void addQuest(Quest quest){
-        quests.add(quest);
+        activeQuests.add(quest);
     }
     public void setActiveQuest(Quest quest){
         activeQuest = quest;
-        State.activeQuest = activeQuest.name;
+        GameState.setActiveQuest(activeQuest.name);
     }
 
     private void die(){
@@ -296,38 +286,119 @@ public class Player {
     }
     public void addItem(Item i){
         inventory.addItems(i);
-
     }
 
     public void heal(float amount) {
-        health = Math.min(health + amount, maxHealth);
+        health += amount;
 
     }
+    public void equipWeapon(String weaponName){
+        if(this.inventory.getItem(weaponName) != null){
+            this.currentWeapon = inventory.getItem(weaponName);
+            isWeaponEquipped = true;
+        }
+    }
 
-
-
+    public void unequipWeapon(){
+        this.currentWeapon = null;
+        isWeaponEquipped = false;
+    }
+    public void equipWeapon(Item i){
+        currentWeapon = i;
+        isWeaponEquipped = true;
+        if(!inventory.getInventory().contains(i)){
+            addItem(i);
+        }
+    }
+    public void consumePotion(Item potion){
+        if(potion.effect.getKey().equals("health")){
+            heal(potion.effect.getValue());
+        }
+        if(potion.effect.getKey().equals("strength")){
+            attributeLevels.put("strength",  attributeLevels.get("strength") + potion.effect.getValue());
+        }
+        if(potion.effect.getKey().equals("intelligence")){
+            attributeLevels.put("intelligence", attributeLevels.get("intelligence") + potion.effect.getValue());
+        }
+    }
+    public JsonObject journalJson(){
+        try {
+            JsonObject json = new JsonObject();
+            for (Quest quest : activeQuests) {
+                json.addProperty("quest", quest.name);
+                json.addProperty("complete", quest.complete);
+                JsonArray jJournalEntries = new JsonArray();
+                quest.journalEntries.entrySet().stream().forEach(entry -> {
+                    JsonObject jJournalEntry = new JsonObject();
+                    jJournalEntry.addProperty("date", entry.getKey());
+                    jJournalEntry.addProperty("entry", entry.getValue());
+                    jJournalEntries.add(jJournalEntry);
+                });
+                json.add("entries", jJournalEntries);
+                return json;
+            }
+        }
+        catch(Exception e){
+            System.err.println("err at `Player::journalJson()`");
+        }
+        return new JsonObject();
+    }
     public JsonObject toJson(){
         try {
             JsonObject json = new JsonObject();
-            JsonObject skills = new JsonObject();
-            skills.addProperty("strength", attributeLevels.get("strength"));
-            skills.addProperty("intelligence", attributeLevels.get("intelligence"));
-            skills.addProperty("charisma", attributeLevels.get("charisma"));
-            skills.addProperty("luck", attributeLevels.get("luck"));
+            JsonObject jSkills = new JsonObject();
+            jSkills.addProperty("strength", attributeLevels.get("strength"));
+            jSkills.addProperty("intelligence", attributeLevels.get("intelligence"));
+            jSkills.addProperty("charisma", attributeLevels.get("charisma"));
+            jSkills.addProperty("luck", attributeLevels.get("luck"));
             json.addProperty("name", name);
             json.addProperty("posX", pos.x);
             json.addProperty("posY", pos.y);
             json.addProperty("health", health);
             json.addProperty("experience", experience);
-            if (this.currentWeapon != null) {
-                json.addProperty("current_weapon", currentWeapon.name);
-            } else {
-                json.addProperty("current_weapon", "");
+            if (activeQuest != null) {
+                json.addProperty("activeQuest", activeQuest.name);
             }
-            json.add("skills", skills);
-            return json;
-        }catch (Exception e){
-            System.err.println("err at toJson() for player");
+            else {
+                json.addProperty("activeQuest", "");
+            }
+
+            JsonObject jEquipment = new JsonObject();
+            if (this.currentWeapon != null) {
+                jEquipment.addProperty("current_weapon", currentWeapon.name);
+            } else {
+                jEquipment.addProperty("current_weapon", "");
+            }
+            if(this.helmet != null){
+                jEquipment.addProperty("helmet", helmet.name);
+            }
+            else {
+                jEquipment.addProperty("helmet", "");
+            }
+            if(this.torso != null){
+                jEquipment.addProperty("torso", torso.name);
+            }
+            else {
+                jEquipment.addProperty("torso", "");
+            }
+            if (this.legs != null){
+                jEquipment.addProperty("legs", legs.name);
+            }
+            else {
+                jEquipment.addProperty("legs", "");
+            }
+            if(this.boots != null){
+                jEquipment.addProperty("boots", boots.name);
+            }
+            else {
+                jEquipment.addProperty("boots", "");
+            }
+                json.add("skills", jSkills);
+                json.add("equipment", jEquipment);
+               return json;
+
+            }catch (Exception e){
+            System.err.println("err at `Player::toJson()`");
         }
         return new JsonObject();
     }

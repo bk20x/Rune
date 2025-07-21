@@ -50,6 +50,8 @@ dependencies {
   implementation 'party.iroiro.luajava:luajava:4.0.2'
   implementation 'party.iroiro.luajava:lua54:4.0.2'
   runtimeOnly 'party.iroiro.luajava:lua54-platform:4.0.2:natives-desktop'
+  implementation "net.java.dev.jna:jna:5.12.0" // Or the desired JNA version
+  implementation "net.java.dev.jna:jna-platform:5.12.0" // If platform-specific features are needed
   if(enableGraalNative == 'true') {
     implementation "io.github.berstanio:gdx-svmhelper-annotations:$graalHelperVersion"
   }

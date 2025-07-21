@@ -13,6 +13,7 @@ import rune.editor.data.GameData;
 import rune.editor.types.DIRECTION;
 import rune.editor.types.EntityTypes;
 
+import java.util.Arrays;
 
 
 public class Slime extends Entity implements MobIface {
@@ -147,7 +148,11 @@ public class Slime extends Entity implements MobIface {
             mob.moving = false;
         }
     }
-
+    public void dispose(){
+        Arrays.stream(altRegions).forEach(region -> region.getTexture().dispose());
+        Arrays.stream(regions).forEach(region -> region.getTexture().dispose());
+        super.dispose();
+    }
 
     @Override
     public void followPlayer(Player player, float dt){

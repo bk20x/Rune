@@ -39,6 +39,7 @@ public class Entity implements MobIface,Cloneable {
     public boolean moving = false;
     public boolean attacking = false;
     public boolean hurt = false;
+    public boolean isUsed = false;
     public Animation<TextureRegion> animation;
 
     public Entity(int id){
@@ -112,11 +113,14 @@ public class Entity implements MobIface,Cloneable {
 
     public void draw(Renderer renderer,float dt){
         update(dt);
-        stateTime += Gdx.graphics.getDeltaTime(); if(stateTime > 10) stateTime = 0;
+
+        // Increment stateTime but reset more frequently to avoid floating-point precision issues
+        stateTime += Gdx.graphics.getDeltaTime();
+        if(stateTime > 3) stateTime = 0;
+
         if(type == EntityTypes.MOB){
             renderer.sb.draw(getAnim().getKeyFrame(stateTime, true), pos.x, pos.y);
         }
-
     }
 
     public void update(float dt){
@@ -126,7 +130,14 @@ public class Entity implements MobIface,Cloneable {
     }
 
     public void dispose(){
-        texture.dispose();
+        if (texture != null) {
+            texture.dispose();
+            texture = null;
+        }
+
+        animation = null;
+        regions = null;
+        altRegions = null;
     }
 
 
@@ -197,7 +208,16 @@ public class Entity implements MobIface,Cloneable {
     public void followPlayer(Player player, float dt){
         follow(this,player,dt);
     }
-
+    public void unwalkableObject(Player player){
+        if(player.isMoving){
+            switch (player.direction){
+                case WEST -> player.pos.x += player.speed * Gdx.graphics.getDeltaTime();
+                case EAST -> player.pos.x -= player.speed * Gdx.graphics.getDeltaTime();
+                case NORTH -> player.pos.y -= player.speed * Gdx.graphics.getDeltaTime();
+                case SOUTH -> player.pos.y += player.speed * Gdx.graphics.getDeltaTime();
+            }
+        }
+    }
     @Override
     public Entity clone(){
         return this;

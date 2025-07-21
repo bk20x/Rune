@@ -1,13 +1,12 @@
 package rune.editor;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import rune.editor.lua.Interop;
 
 import java.util.HashMap;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
-public class State extends Game {
+public class Game extends com.badlogic.gdx.Game {
 
     public static HashMap<String, Integer> keyBinds = new HashMap<>();
 
@@ -21,12 +20,12 @@ public class State extends Game {
     }
 
     public Interop interop;
-    public static String activeQuest;
+
 
     @Override
     public void create() {
         interop = new Interop();
-        setScreen(new FirstScreen(this));
+        setScreen(new GameScreen(this));
     }
 
 

@@ -11,20 +11,24 @@ import rune.editor.maps.DungeonMap;
 
 
 
-public class World {
+public class GameState {
 
 
 
+    public static String activeQuest;
+    public static void setActiveQuest(String questName) {
+        activeQuest = questName;
+    }
 
 
     public Scene scene;
     private Player player;
     private final Renderer renderer;
-    private Color tint;
-
     public boolean isSceneActive = true;
+
+
     private DungeonMap dmap;
-    public World(){
+    public GameState(){
         renderer = new Renderer();
 
 
@@ -42,9 +46,14 @@ public class World {
     public synchronized void setScene(Scene scene) {
         renderer.flush();
         if (player != null) {
-            player.killed = null;
+            player.lastEntityKilled = null;
         }
         isSceneActive = false;
+
+        if (this.scene != null) {
+            this.scene.dispose();
+        }
+
         this.scene = scene;
         isSceneActive = true;
     }
@@ -58,9 +67,12 @@ public class World {
         scene.setView(camera);
     }
 
-    public void render(@NotNull Renderer renderer, float dt){
+    public void run(@NotNull Renderer renderer, float dt){
         renderer.start();
         if(isSceneActive){
+            scene.update();
+            scene.playerInteract(player);
+
             if(player.isMelee) {
                 scene.entitySystem.battle(player);
             }
@@ -76,5 +88,5 @@ public class World {
         renderer.stop();
     }
 
-    public static World New(){return new World();}
+    public static GameState New(){return new GameState();}
 }

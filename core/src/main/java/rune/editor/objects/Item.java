@@ -21,7 +21,9 @@ public class Item {
     public Texture texture;
     public float baseDamage, damage;
     public int amount = 1;
-    public Pair<String,Float> effect;
+    public Pair<String,Integer> effect;
+    public int defense;
+    public int duration;
     public Item(){}
 
     public Item(String name, ItemTypes type){
@@ -33,6 +35,7 @@ public class Item {
             damage = baseDamage;
         }
     }
+
     public Item(String name, ItemTypes type, int amount){
         this.name = name;
         this.type = type;
@@ -55,7 +58,7 @@ public class Item {
     public void setDamage(float damage){this.damage = damage;}
     public void setAmount(int amount){this.amount = amount;}
     public void setBaseDamage(float baseDamage){this.baseDamage = baseDamage;}
-    public void setEffect(String effect, Float value){
+    public void setEffect(String effect, Integer value){
         this.effect = new Pair<>(effect,value);
     }
     public static Item New(String name,ItemTypes type){

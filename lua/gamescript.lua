@@ -9,23 +9,25 @@ require('engine_globals')
 require('items')
 require('game')
 Player = import('rune.editor.Player')
-World = import('rune.editor.scene.World')
+GameState = import('rune.editor.GameScreen').runeGame
 
 ShapeRenderer = import('rune.editor.ShapeRenderer')
 Gdx = import('com.badlogic.gdx.Gdx')
 
 local sr = ShapeRenderer:New()
 
-local camera = newCamera(640,360)
+local camera = Camera(640,360)
 local player = Player:New()
 local scene = Scene:New()
-local world = World:New()
+local game = GameState:New()
+
+
 
 -- local dungeon = Scenes:DungeonMap("dungeon1")
 
 
-world:setScene(scene) ---setScene sets the active scene in the world, for ex. entering a dungeon switches the scene
-world:addPlayer(player) ---important for the player to interact with the scene && the players draw method is called with world:render()
+game:setScene(scene) ---setScene sets the active scene in the game, for ex. entering a dungeon switches the scene
+game:addPlayer(player) ---important for the player to interact with the scene && the players draw method is called with game:render()
 
 
 
@@ -60,13 +62,6 @@ end
 
 
 local function update()
-    if world.scene.entitySystem:size() < 10 then
-          for i = 1, 8, 1 do
-             for k, e in pairs(random())do
-                 world:addEntity(e)
-            end
-        end
-    end
     camera.position.y = player.pos.y + 16
     camera.position.x = player.pos.x + 16
 
@@ -78,19 +73,29 @@ local function update()
 
 
     camera:update()
-    world:setView(camera)
+    game:setView(camera)
 end
-player:addItem(Items:Random(Rarity.UNIQUE))
+
+
+
+
+local dmap = Scenes:DungeonMap("DungeonMap1")
+
+game:setScene(dmap)
+
+
 
 function draw()
 local dt = Gdx.graphics:getDeltaTime()
-    sr:start()
-
+     sr:start()
+     if keyDown(Keys.T) then
+         System.out:println(player.inventory:size())
+     end
      update()
-     world:render(r, dt)
+     game:run(r, dt)
 
      sr:rect(viewBounds.x, viewBounds.y, viewBounds.width, viewBounds.height)
      sr:stop()
-    zoom()
+     zoom()
 end
 

@@ -1,26 +1,55 @@
 [
-  {"name": "bloody_mace",
+  {"name": "bloody mace",
     "rarity": "COMMON",
     "type": "WEAPON",
     "damage": 10
   },
-  {"name": "drained_hero_sword",
+  {"name": "drained hero sword",
     "rarity": "UNIQUE",
     "type": "WEAPON",
     "damage": 20
   },
-  {"name": "hero_sword",
+  {"name": "hero sword",
     "rarity": "UNIQUE",
     "type": "WEAPON",
     "damage": 80
   },
-  {"name": "health_potion",
+  {"name": "weak health potion",
     "rarity": "COMMON",
     "type": "POTION",
-    "effect":"health:15"
+    "effect":"health:10",
+    "duration": 0
   },
-  {"name" : "fagar_dildo",
-    "rarity": "UNIQUE",
-    "type" : "MISC"
+  {"name": "health potion",
+    "rarity": "UNCOMMON",
+    "type": "POTION",
+    "effect": "health:15",
+    "duration": 0
+  },
+  {"name": "weak strength potion",
+    "rarity": "COMMON",
+    "type" : "POTION",
+    "effect": "strength:5",
+    "duration": 0
+  },
+  {"name": "leather helmet",
+    "rarity": "COMMON",
+    "type": "ARMOR",
+    "defense": 1
+  },
+  {"name":"leather cuirass",
+    "rarity": "COMMON",
+    "type": "ARMOR",
+    "defense": 2
+  },
+  {"name": "leather greaves",
+    "rarity": "COMMON",
+    "type" : "ARMOR",
+    "defense": 1
+  },
+  {"name": "leather boots",
+    "rarity": "COMMON",
+    "type": "ARMOR",
+    "defense": 1
   }
 ]

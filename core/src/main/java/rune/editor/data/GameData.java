@@ -5,6 +5,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
+import org.luaj.vm2.ast.Str;
 import rune.editor.Player;
 import rune.editor.npc.Npc;
 import rune.editor.entity.Entity;
@@ -94,19 +95,44 @@ public class GameData {
             String name = playerData.get("name").getAsString();
             float experience = playerData.get("experience").getAsFloat();
 
-            String currentWeapon = playerData.get("current_weapon").getAsString();
+            JsonObject inventoryData = playerData.get("equipment").getAsJsonObject();
+
+            String currentWeapon = inventoryData.get("current_weapon").getAsString();
+            String currentGauntlets = inventoryData.get("hands").getAsString();
+            String currentHelmet = inventoryData.get("head").getAsString();
+            String currentChest = inventoryData.get("torso").getAsString();
+            String currentPants = inventoryData.get("legs").getAsString();
+            String currentBoots = inventoryData.get("feet").getAsString();
+
+
+            if(!currentBoots.isEmpty()){
+                player.boots = Items.Armor(currentBoots);
+            }
+            if(!currentPants.isEmpty()){
+                player.legs = Items.Armor(currentPants);
+            }
+            if(!currentChest.isEmpty()){
+                player.torso = Items.Armor(currentChest);
+            }
+            if(!currentHelmet.isEmpty()){
+                player.helmet = Items.Armor(currentHelmet);
+            }
+            if(!currentWeapon.isEmpty()){
+                player.currentWeapon = Items.Weapon(currentWeapon);
+                player.isWeaponEquipped = true;
+            }
+            if(!currentGauntlets.isEmpty()){
+                player.hands = Items.Armor(currentGauntlets);
+            }
+
+
 
             player.name = name;
             player.experience = experience;
             player.pos.x = playerData.get("posX").getAsFloat();
             player.pos.y = playerData.get("posY").getAsFloat();
 
-            if (currentWeapon != null && !currentWeapon.isEmpty()) {
 
-                player.currentWeapon = Items.Weapon(playerData.get("current_weapon").getAsString()); //Items.Weapon() for testing, this will check the future inventory file for the item and set the current Weapon based on that
-                player.isWeaponEquipped = true;
-
-            }
             loadPlayerStats(player);
             loadPlayerQuests(player);
         } catch ( RuntimeException e ){
@@ -124,9 +150,8 @@ public class GameData {
             quest.complete = questData.get("complete").getAsBoolean();
             for (JsonElement entry : questData.getAsJsonArray("entries")) {
                 quest.journalEntries.put(entry.getAsJsonObject().get("date").getAsString(), entry.getAsJsonObject().get("entry").getAsString());
-
-                player.quests.add(quest);
             }
+            player.activeQuests.add(quest);
         }
 
 
@@ -156,9 +181,15 @@ public class GameData {
                 switch (i.type){
                     case WEAPON -> i.setBaseDamage(itemData.get("damage").getAsFloat());
                     case POTION -> {
-                        String effect = itemData.get("effect").getAsString().split(":")[0];
-                        float value = Float.parseFloat(itemData.get("effect").getAsString().split(":")[1]);
+                        final String effect = itemData.get("effect").getAsString().split(":")[0];
+                        final int value = Integer.parseInt(itemData.get("effect").getAsString().split(":")[1]);
+                        if (itemData.get("duration").getAsInt() > 0){
+                            i.duration = itemData.get("duration").getAsInt();
+                        }
                         i.setEffect(effect,value);
+                    }
+                    case ARMOR -> {
+                        i.defense = itemData.get("defense").getAsInt();
                     }
                 }
             }

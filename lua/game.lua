@@ -13,7 +13,7 @@ OrthoCam = import('com.badlogic.gdx.graphics.OrthographicCamera')
 ---@param width integer
 ---@param height integer
 ---@return OrthoCam
-function newCamera(width,height)
+function Camera(width,height)
     return java.new(OrthoCam,width,height)
 end
 

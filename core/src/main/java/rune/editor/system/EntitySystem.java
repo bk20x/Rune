@@ -17,12 +17,16 @@ public class EntitySystem {
         newEnts = new ArrayList<>();
     }
 
-
     public void draw(Renderer renderer,float dt){
         for(int i: entities.keySet()){
             entities.get(i).update(dt);
             if(entities.get(i).alive) {
                 entities.get(i).draw(renderer,dt);
+            }
+
+            if(!entities.get(i).alive){
+               entities.get(i).dispose();
+               entities.remove(i);
             }
         }
     }
@@ -31,14 +35,13 @@ public class EntitySystem {
     public void battle(Player player){
         for (int i : entities.keySet()){
             if(!entities.get(i).alive){
-                player.killed = entities.get(i);
+                player.lastEntityKilled = entities.get(i);
                 entities.remove(i);
                 continue;
             }
             if(player.hitMob(entities.get(i)) && entities.get(i).alive){
                 entities.get(i).collided(player.wepRec);
                 entities.get(i).appliedDamage = player.currentWeapon.damage;
-
 
             }
         }

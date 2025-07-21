@@ -1,23 +1,20 @@
 package rune.editor;
 
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.utils.ScreenUtils;
-import rune.editor.shaders.Shaders;
-
-import static rune.editor.State.*;
+import rune.editor.scene.GameState;
 
 /** First screen of the application. Displayed after the application is created. */
-public class FirstScreen implements Screen {
+public class GameScreen implements Screen {
 
 
-    private State game;
+    private Game game;
 
-    public FirstScreen(State game) {
+    public GameScreen(Game game) {
         this.game = game;
     }
 
-    ShaderProgram test = Shaders.Test();
+    public static GameState runeGame = new GameState();
     @Override
     public void show() {
 
@@ -32,47 +29,54 @@ public class FirstScreen implements Screen {
     public void render(float delta) {
         ScreenUtils.clear(0.7f,0.7f,0.7f,1);
 
-
         callLuaFunc("draw");
-        if(activeQuest != null){
-            loadLuaFile("lua/quests/" + activeQuest + ".lua");
-        }
+
 
     }
 
     @Override
     public void resize(int width, int height) {
-        // Resize your screen here. The parameters represent the new window size.
+
     }
 
     @Override
     public void pause() {
-        // Invoked when your application is paused.
+
 
     }
 
     @Override
     public void resume() {
-        // Invoked when your application is resumed after pause.
+
     }
 
     @Override
     public void hide() {
-        // This method is called when another screen replaces this one.
+
     }
 
     @Override
     public void dispose() {
-        // Destroy screen's assets here.
+        if (game != null && game.interop != null) {
+            game.interop.dispose();
+        }
+
+
+        if (runeGame != null) {
+            if (runeGame.scene != null) {
+                runeGame.scene.dispose();
+            }
+        }
     }
 
     public void loadLuaFile(String filePath) {
         game.interop.loadLuaFile(filePath);
     }
     public void callLuaFunc(String funcName) {
-
         game.interop.callLuaFunc(funcName);
-
     }
+
+
+
 
 }
