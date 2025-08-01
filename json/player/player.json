@@ -8,12 +8,6 @@
               "intelligence": 10,
               "charisma": 10,
               "luck": 10
-              },
-  "equipment":{"equipped weapon": "drained hero sword",
-                "head": "",
-                "torso" : "",
-                "hands" : "",
-                "legs": "leather greaves",
-                "feet": ""}
+              }
 }
 

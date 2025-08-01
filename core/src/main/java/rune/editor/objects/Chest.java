@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import rune.editor.Statics;
+import rune.editor.Globals;
 import rune.editor.Game;
 import rune.editor.Player;
 import rune.editor.Renderer;
@@ -30,7 +30,7 @@ public class Chest extends Entity {
         this.items = new Vector<>();
         this.pos = new Vector2();
 
-        this.texture = new Texture(Gdx.files.internal(Statics.objectPath + "chest.png"));
+        this.texture = new Texture(Gdx.files.internal(Globals.objectPath + "chest.png"));
         this.regions = TextureRegion.split(texture, 18,14)[0];
 
         height = regions[0].getRegionHeight()/2;

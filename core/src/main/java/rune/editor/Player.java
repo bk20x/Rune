@@ -211,6 +211,9 @@ public class Player {
 
     public void update(float dt){
         input(dt);
+        if(!isAlive){
+            die();
+        }
         if(isMoving){
             bounds.setPosition(pos.x,pos.y);
             range.setPosition(pos.x,pos.y);
@@ -222,8 +225,6 @@ public class Player {
             isMelee = false;
         }
         activeQuests.removeIf(quest -> quest.complete);
-
-        if(!isAlive){die();}
     }
 
 
@@ -333,6 +334,7 @@ public class Player {
             attributeLevels.put("intelligence", attributeLevels.get("intelligence") + potion.effect.getValue());
         }
     }
+
     public JsonObject journalJson(){
         try {
             JsonObject json = new JsonObject();
@@ -352,6 +354,43 @@ public class Player {
         }
         catch(Exception e){
             System.err.println("err at `Player::journalJson()`");
+        }
+        return new JsonObject();
+    }
+
+    public JsonObject equipmentJson(){
+        try {
+            JsonObject json = new JsonObject();
+            JsonObject equipmentSlots = new JsonObject();
+            if(currentWeapon != null) {
+                equipmentSlots.addProperty("melee",currentWeapon.name );
+            }else {
+                equipmentSlots.addProperty("melee", "");
+            }
+            if(helmet != null) {
+                equipmentSlots.addProperty("helmet",helmet.name );
+            }else {
+                equipmentSlots.addProperty("helmet","");
+            }
+            if(torso != null) {
+                equipmentSlots.addProperty("torso",torso.name );
+            }else {
+                equipmentSlots.addProperty("torso","");
+            }
+            if(legs != null) {
+                equipmentSlots.addProperty("legs",legs.name);
+            }else {
+                equipmentSlots.addProperty("legs","");
+            }
+            if(boots != null) {
+                equipmentSlots.addProperty("boots",boots.name);
+            }else {
+                equipmentSlots.addProperty("boots", "");
+            }
+            json.add("equipment slots", equipmentSlots);
+            return json;
+        }catch (Exception e){
+            System.err.println("err at `Player::equipmentJson()`");
         }
         return new JsonObject();
     }
@@ -375,39 +414,9 @@ public class Player {
                 json.addProperty("activeQuest", "");
             }
 
-            JsonObject jEquipment = new JsonObject();
-            if (this.currentWeapon != null) {
-                jEquipment.addProperty("current_weapon", currentWeapon.name);
-            } else {
-                jEquipment.addProperty("current_weapon", "");
-            }
-            if(this.helmet != null){
-                jEquipment.addProperty("helmet", helmet.name);
-            }
-            else {
-                jEquipment.addProperty("helmet", "");
-            }
-            if(this.torso != null){
-                jEquipment.addProperty("torso", torso.name);
-            }
-            else {
-                jEquipment.addProperty("torso", "");
-            }
-            if (this.legs != null){
-                jEquipment.addProperty("legs", legs.name);
-            }
-            else {
-                jEquipment.addProperty("legs", "");
-            }
-            if(this.boots != null){
-                jEquipment.addProperty("boots", boots.name);
-            }
-            else {
-                jEquipment.addProperty("boots", "");
-            }
-                json.add("skills", jSkills);
-                json.add("equipment", jEquipment);
-                return json;
+            json.add("skills", jSkills);
+
+            return json;
 
             }catch (Exception e){
             System.err.println("err at `Player::toJson()`");

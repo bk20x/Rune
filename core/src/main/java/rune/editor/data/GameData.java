@@ -19,14 +19,13 @@ import rune.editor.types.NpcTypes;
 import rune.editor.types.Rarity;
 import rune.editor.types.SpellTypes;
 
-import java.io.FileReader;
-import java.io.Reader;
+import java.io.*;
 
 public class GameData {
 
 
     public static Gson gson = new Gson();
-
+    public static final String savePath = "json/player/save.json";
 
     public static  <T> T objFromFile(String filePath, Class<T> classOfT) {
         try (Reader reader = new FileReader(filePath)) {
@@ -97,44 +96,38 @@ public class GameData {
 
             String name = playerData.get("name").getAsString();
             float experience = playerData.get("experience").getAsFloat();
-
-            JsonObject inventoryData = playerData.get("equipment").getAsJsonObject();
-
-            String currentWeapon = inventoryData.get("equipped weapon").getAsString();
-            String currentGauntlets = inventoryData.get("hands").getAsString();
-            String currentHelmet = inventoryData.get("head").getAsString();
-            String currentChest = inventoryData.get("torso").getAsString();
-            String currentPants = inventoryData.get("legs").getAsString();
-            String currentBoots = inventoryData.get("feet").getAsString();
-
-
-            if(!currentBoots.isEmpty()){
-                player.boots = Items.Armor(currentBoots);
-            }
-            if(!currentPants.isEmpty()){
-                player.legs = Items.Armor(currentPants);
-            }
-            if(!currentChest.isEmpty()){
-                player.torso = Items.Armor(currentChest);
-            }
-            if(!currentHelmet.isEmpty()){
-                player.helmet = Items.Armor(currentHelmet);
-            }
-            if(!currentWeapon.isEmpty()){
-                player.currentWeapon = Items.Weapon(currentWeapon);
-                player.isWeaponEquipped = true;
-            }
-            if(!currentGauntlets.isEmpty()){
-                player.hands = Items.Armor(currentGauntlets);
-            }
-
-
-
             player.name = name;
             player.experience = experience;
             player.pos.x = playerData.get("posX").getAsFloat();
             player.pos.y = playerData.get("posY").getAsFloat();
 
+            JsonObject inventoryData =  objFromFile("json/player/inventory.json", JsonObject.class);
+            JsonObject equipmentSlots = inventoryData.get("equipment slots").getAsJsonObject();
+
+
+            if(!equipmentSlots.get("melee").getAsString().isBlank()){
+                player.equipWeapon(Items.Weapon(equipmentSlots.get("melee").getAsString()));
+            }
+            if(!equipmentSlots.get("helmet").getAsString().isBlank()){
+                var helmet = Items.Armor(equipmentSlots.get("helmet").getAsString());
+                player.helmet = helmet;
+                player.addItem(helmet);
+            }
+            if(!equipmentSlots.get("torso").getAsString().isBlank()){
+                var torso = Items.Armor(equipmentSlots.get("torso").getAsString());
+                player.torso = torso;
+                player.addItem(torso);
+            }
+            if(!equipmentSlots.get("legs").getAsString().isBlank()){
+                var legs = Items.Armor(equipmentSlots.get("legs").getAsString());
+                player.legs = legs;
+                player.addItem(legs);
+            }
+            if(!equipmentSlots.get("boots").getAsString().isBlank()){
+                var boots = Items.Armor(equipmentSlots.get("boots").getAsString());
+                player.boots = boots;
+                player.addItem(boots);
+            }
 
             loadPlayerStats(player);
             loadPlayerQuests(player);
@@ -142,8 +135,6 @@ public class GameData {
         } catch ( RuntimeException e ){
             System.err.println("Error parsing save file: " + e);
         }
-
-
     }
 
     public static void loadPlayerQuests(Player player){
@@ -224,5 +215,22 @@ public class GameData {
         }
     }
 
+    public static void writeInventoryFile(Player player){
+        JsonObject inventoryJson = player.equipmentJson();
+        try (FileOutputStream fos = new FileOutputStream("json/player/inventory.json")){
+            fos.write(inventoryJson.toString().getBytes());
+        }catch (IOException e){
+            System.err.println(e);
+        }
+    }
+    public static void writeSaveFile(Player player){
+        JsonObject playerJson = player.toJson();
+        try (FileOutputStream fos = new FileOutputStream(savePath)){
+            fos.write(playerJson.toString().getBytes());
+        }catch (IOException e){
+            System.err.println(e);
+        }
+        writeInventoryFile(player);
+    }
 
 }

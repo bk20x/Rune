@@ -1,7 +1,7 @@
 package rune.editor.scene;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.MathUtils;
 import rune.editor.Player;
 import rune.editor.Renderer;
@@ -15,25 +15,20 @@ public class SceneTransitionManager {
         FADE_IN
     }
 
+    public enum ManipType{
+        ZOOM_IN,
+        ZOOM_OUT,
+        ROTATE
+    }
 
     public TransitionState currentState = TransitionState.NONE;
-
-
     public float alpha = 0f;
-    public float fadeDuration = 0.5f;
+    public float fadeDuration = 0.60f;
     public float fadeTimer = 0f;
     public Scene targetScene;
     public String exitDirection;
 
-
-
-
-    public SceneTransitionManager() {
-
-
-
-    }
-
+    public SceneTransitionManager() {}
 
     public void startTransition(Scene targetScene, String exitDirection) {
         if (currentState == TransitionState.NONE) {
@@ -45,18 +40,16 @@ public class SceneTransitionManager {
     }
 
 
-    public boolean update(float dt, Player player, GameState gameState) {
+    public boolean updateTransitionState(float dt, Player player, GameState gameState) {
         if (currentState == TransitionState.NONE) {
             return true;
         }
-
         fadeTimer += dt;
-
         if (currentState == TransitionState.FADE_OUT) {
             alpha = MathUtils.clamp(fadeTimer / fadeDuration, 0f, 1f);
 
             if (fadeTimer >= fadeDuration) {
-                sceneTransition(gameState,player);
+                setActiveSceneToTarget(gameState,player);
                 currentState = TransitionState.FADE_IN;
                 fadeTimer = 0f;
             }
@@ -69,10 +62,9 @@ public class SceneTransitionManager {
                 return true;
             }
         }
-
         return false;
     }
-    private void sceneTransition(GameState gameState,Player player) {
+    private void setActiveSceneToTarget(GameState gameState, Player player) {
 
 
         gameState.setScene(targetScene);
@@ -108,7 +100,19 @@ public class SceneTransitionManager {
 
         }
     }
-    public void render() {
+
+
+    public void beginManipulateCamera(OrthographicCamera camera, ManipType manipType) {
+        ManipType manip = manipType;
+
+
+
+
+
+
+    }
+
+    public void renderTransitionEffect() {
         if (currentState != TransitionState.NONE) {
             Renderer renderer = new Renderer();
             Color fadeColor = new Color(0, 0, 0, alpha * 0.75f);

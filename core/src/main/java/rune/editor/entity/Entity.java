@@ -76,18 +76,13 @@ public class Entity implements MobIface,Cloneable {
 
     public Animation<TextureRegion> getAnim(){
         return switch (direction){
-            case NORTH -> {
-                 yield new Animation<TextureRegion>(0.30f, altRegions[3], altRegions[4], altRegions[5]);
-            }
-            case EAST -> {
-                 yield new Animation<TextureRegion>(0.30f, regions[3], regions[4], regions[5]);
-            }
-            case WEST -> {
-                yield new Animation<TextureRegion>(0.30f, altRegions[0], altRegions[1], altRegions[2]);
-            }
-            case SOUTH ->{
-               yield new Animation<TextureRegion>(0.30f, regions[0], regions[1], regions[2]);
-            }
+            case NORTH -> new Animation<>(0.30f, altRegions[3], altRegions[4], altRegions[5]);
+            case EAST -> new Animation<>(0.30f, regions[3], regions[4], regions[5]);
+
+            case WEST -> new Animation<>(0.30f, altRegions[0], altRegions[1], altRegions[2]);
+
+            case SOUTH -> new Animation<>(0.30f, regions[0], regions[1], regions[2]);
+
         };
     }
 

@@ -2,13 +2,9 @@ package rune.editor.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import net.dermetfan.utils.Pair;
-import rune.editor.Statics;
+import rune.editor.Globals;
 import rune.editor.types.ItemTypes;
 import rune.editor.types.Rarity;
-
-import javax.swing.text.html.Option;
-import java.io.FileNotFoundException;
-import java.util.Optional;
 
 import static rune.editor.data.GameData.setItemValues;
 
@@ -88,7 +84,7 @@ public class Item {
 
     public Texture getTexture(){
         try {
-             return new Texture(Statics.itemPath + name + ".png");
+             return new Texture(Globals.itemPath + name + ".png");
         }
         catch (RuntimeException e){
             return new Texture("shadow.png");

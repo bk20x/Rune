@@ -1,9 +1,12 @@
 package rune.editor.scene;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import rune.editor.Player;
 import rune.editor.Renderer;
+import rune.editor.data.GameData;
 import rune.editor.entity.Entity;
 
 
@@ -72,7 +75,7 @@ public class GameState {
     }
 
     public void run(Renderer renderer, float dt){
-        boolean transitionComplete = transitionManager.update(dt,player,this);
+        boolean transitionComplete = transitionManager.updateTransitionState(dt,player,this);
 
 
         if (camera != null) {
@@ -95,7 +98,10 @@ public class GameState {
                 if(transitionComplete){
                     player.draw(renderer, dt);
                 }
+                if(Gdx.input.isKeyPressed(Input.Keys.Y)){
+                    GameData.writeSaveFile(player);
 
+                }
                 if (!transitionManager.isTransitioning()) {
                     checkSceneTransitions();
                 }
@@ -106,7 +112,7 @@ public class GameState {
         }
 
 
-        transitionManager.render();
+        transitionManager.renderTransitionEffect();
         renderer.stop();
 
 
