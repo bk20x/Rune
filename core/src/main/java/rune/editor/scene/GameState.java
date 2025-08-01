@@ -40,16 +40,14 @@ public class GameState {
 
 
     public synchronized void setScene(Scene scene) {
+        isSceneActive = false;
         renderer.flush();
         if (player != null) {
             player.lastEntityKilled = null;
         }
-        isSceneActive = false;
-
         if (this.scene != null) {
             this.scene.dispose();
         }
-
         this.scene = scene;
         isSceneActive = true;
     }

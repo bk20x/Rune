@@ -45,10 +45,12 @@ public class Chest extends Entity {
         if(player.bounds.overlaps(this.interactZone)){
             if(Gdx.input.isKeyJustPressed(Game.keyBinds.get("INTERACT")) && !isUsed){
                 player.inventory.addItems(items);
+
                 for (Item item : items) {
                     if(item.name != null)
                         System.out.println("Got: " + item.name);
                 }
+
                 items.clear();
                 isUsed = true;
             }

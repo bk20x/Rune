@@ -10,20 +10,20 @@ import rune.editor.scene.GameState;
 public class GameScreen implements Screen {
 
 
-    private Game game;
+    private final Game game;
 
     public GameScreen(Game game) {
         this.game = game;
     }
 
-    public static GameState runeGame = new GameState();
+    public static final GameState gameState = new GameState();
     public Renderer renderer;
     @Override
     public void show() {
 
         renderer = new Renderer();
         loadLuaFile("lua/config.lua");
-        loadLuaFile("lua/gamescript.lua");
+        loadLuaFile("lua/main.lua");
 
 
     }
@@ -31,7 +31,7 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0.7f,0.7f,0.7f,1);
-        runeGame.run(renderer,delta);
+        gameState.run(renderer,delta);
         callLuaFunc("main");
         reloadScript();
     }
@@ -62,13 +62,7 @@ public class GameScreen implements Screen {
         if (game != null && game.interop != null) {
             game.interop.dispose();
         }
-
-
-        if (runeGame != null) {
-            if (runeGame.scene != null) {
-                runeGame.scene.dispose();
-            }
-        }
+        gameState.scene.dispose();
     }
 
     public void loadLuaFile(String filePath) {
@@ -80,7 +74,7 @@ public class GameScreen implements Screen {
 
     public void reloadScript(){
         if(Gdx.input.isKeyPressed(Input.Keys.R)){
-            loadLuaFile("lua/entity.lua");
+            loadLuaFile("lua/main.lua");
         }
 
     }
