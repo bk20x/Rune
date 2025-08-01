@@ -96,33 +96,30 @@ public class Player {
 
     private void input(float dt){
         isMoving = false;
+        if(!isMelee) {
+            if (Gdx.input.isKeyPressed(keyBinds.get("UP"))) {
+                pos.y += speed * dt;
+                direction = DIRECTION.NORTH;
+                isMoving = true;
+            } else if (Gdx.input.isKeyPressed(keyBinds.get("DOWN"))) {
+                pos.y -= speed * dt;
+                direction = DIRECTION.SOUTH;
+                isMoving = true;
+            } else if (Gdx.input.isKeyPressed(keyBinds.get("LEFT"))) {
+                pos.x -= speed * dt;
+                direction = DIRECTION.WEST;
+                isMoving = true;
+            } else if (Gdx.input.isKeyPressed(keyBinds.get("RIGHT"))) {
+                pos.x += speed * dt;
+                direction = EAST;
+                isMoving = true;
+            }
 
-        if (Gdx.input.isKeyPressed(keyBinds.get("UP")) && !isMelee){
-            pos.y += speed * dt;
-            direction = DIRECTION.NORTH;
-            isMoving = true;
+            if (Gdx.input.isKeyJustPressed(keyBinds.get("MELEE")) && isWeaponEquipped) {
+                isMelee = true;
+                delta = 0;
+            }
         }
-        else if (Gdx.input.isKeyPressed(keyBinds.get("DOWN")) && !isMelee){
-            pos.y -= speed * dt;
-            direction = DIRECTION.SOUTH;
-            isMoving = true;
-        }
-        else if (Gdx.input.isKeyPressed(keyBinds.get("LEFT")) && !isMelee){
-            pos.x -= speed * dt;
-            direction = DIRECTION.WEST;
-            isMoving = true;
-        }
-        else if (Gdx.input.isKeyPressed(keyBinds.get("RIGHT")) && !isMelee){
-            pos.x += speed * dt;
-            direction = EAST;
-            isMoving = true;
-        }
-
-        if(Gdx.input.isKeyJustPressed(keyBinds.get("MELEE")) && isWeaponEquipped && !isMelee){
-            isMelee = true;
-            delta = 0;
-        }
-
         if(Gdx.input.isKeyPressed(Input.Keys.B)){
             equipWeapon(inventory.getInventory().firstElement());
             System.out.println(inventory.getInventory().firstElement().name);
