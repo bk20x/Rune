@@ -1,0 +1,12 @@
+[
+  {"spell": "firebolt",
+    "type": "DESTRUCTION",
+    "damage": 25,
+    "travel speed": 150,
+    "range": 200
+  }
+
+
+
+
+]

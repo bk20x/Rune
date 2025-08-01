@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.tiled.tiles.AnimatedTiledMapTile;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -21,10 +20,11 @@ import java.util.Vector;
 public class Chest extends Entity {
 
     public Vector<Item> items;
+    public int width, height;
 
     private float stateTime;
-    public AnimatedTiledMapTile chestTile;
-    int width, height;
+    private Rectangle interactZone;
+
     public Chest() {
         this.type = EntityTypes.ANIMATED_OBJ;
         this.items = new Vector<>();
@@ -32,15 +32,17 @@ public class Chest extends Entity {
 
         this.texture = new Texture(Gdx.files.internal(Statics.objectPath + "chest.png"));
         this.regions = TextureRegion.split(texture, 18,14)[0];
+
         height = regions[0].getRegionHeight()/2;
         width = regions[0].getRegionWidth()/2;
         this.animation = new Animation<>(0.10f,regions[0],regions[1]);
         this.bounds = new Rectangle(pos.x - width,pos.y - height,width,height);
+        this.interactZone = new Rectangle(pos.x - width*2,pos.y - height*2,width*2,height*2);
     }
 
     public void openChest(Player player){
-        if(player.bounds.overlaps(this.bounds)){
-            unwalkableObject(player);
+        unwalkableObject(player);
+        if(player.bounds.overlaps(this.interactZone)){
             if(Gdx.input.isKeyJustPressed(Game.keyBinds.get("INTERACT")) && !isUsed){
                 player.inventory.addItems(items);
                 for (Item item : items) {
@@ -88,5 +90,6 @@ public class Chest extends Entity {
     public void setPos(float x, float y) {
         pos.set(x, y);
         bounds.set(x + width/2,y + height + 2,width,height);
+        interactZone.set(x - width,y ,width*4,height*4);
     }
 }

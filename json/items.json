@@ -2,54 +2,64 @@
   {"name": "bloody mace",
     "rarity": "COMMON",
     "type": "WEAPON",
-    "damage": 10
+    "damage": 10,
+    "cost": 25
   },
   {"name": "drained hero sword",
     "rarity": "UNIQUE",
     "type": "WEAPON",
-    "damage": 20
+    "damage": 20,
+    "cost": 0
   },
   {"name": "hero sword",
     "rarity": "UNIQUE",
     "type": "WEAPON",
-    "damage": 80
+    "damage": 80,
+    "cost": 0
   },
   {"name": "weak health potion",
     "rarity": "COMMON",
     "type": "POTION",
     "effect":"health:10",
-    "duration": 0
+    "duration": 0,
+    "cost" : 10
   },
   {"name": "health potion",
     "rarity": "UNCOMMON",
     "type": "POTION",
     "effect": "health:15",
-    "duration": 0
+    "duration": 0,
+    "cost": 15
   },
   {"name": "weak strength potion",
     "rarity": "COMMON",
     "type" : "POTION",
     "effect": "strength:5",
-    "duration": 0
+    "duration": 0,
+    "cost": 15
   },
   {"name": "leather helmet",
     "rarity": "COMMON",
     "type": "ARMOR",
-    "defense": 1
+    "defense": 1,
+    "cost": 15
   },
   {"name":"leather cuirass",
     "rarity": "COMMON",
     "type": "ARMOR",
-    "defense": 2
+    "defense": 2,
+    "cost": 30
   },
   {"name": "leather greaves",
     "rarity": "COMMON",
     "type" : "ARMOR",
-    "defense": 1
+    "defense": 1,
+    "cost" : 15
   },
   {"name": "leather boots",
     "rarity": "COMMON",
     "type": "ARMOR",
-    "defense": 1
+    "defense": 1,
+    "cost" : 15
   }
 ]

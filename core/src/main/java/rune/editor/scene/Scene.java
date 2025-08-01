@@ -1,46 +1,43 @@
 package rune.editor.scene;
 
 
-import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
-import com.github.javaparser.ast.type.VoidType;
 import rune.editor.Player;
 import rune.editor.Renderer;
 import rune.editor.entity.Entity;
-import rune.editor.entity.Slime;
-import rune.editor.system.EntitySystem;
-import rune.editor.types.Rarity;
+import rune.editor.system.EntityManager;
 
-import java.sql.Struct;
+import static rune.editor.data.GameData.setSceneValues;
 
 
 public class Scene{
 
     public TiledMap map;
     public final OrthogonalTiledMapRenderer mapRenderer;
-    public EntitySystem entitySystem;
+    public EntityManager entityManager;
     public int width, height;
     private boolean disposed = false;
-
+    public String name;
 
 
     public Scene(){
         map = new TmxMapLoader().load("pmap/pmap.tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
-        entitySystem = new EntitySystem();
+        entityManager = new EntityManager();
         width = map.getProperties().get("width",Integer.class)*32;
         height = map.getProperties().get("height",Integer.class)*32;
-
-
     }
 
     public Scene(String name){
-        map = new TmxMapLoader().load( name + "/" + name + ".tmx");
+        this.name = name;
+        setSceneValues(this);
+        map = new TmxMapLoader().load( "maps/" + name + "/" + name + ".tmx");
         mapRenderer = new OrthogonalTiledMapRenderer(map);
-        entitySystem = new EntitySystem();
+        entityManager = new EntityManager();
         width = map.getProperties().get("width",Integer.class)*32;
         height = map.getProperties().get("height",Integer.class)*32;
     }
@@ -52,13 +49,30 @@ public class Scene{
     public void update(){
 
     }
-    public void playerInteract(Player player){
 
+
+    public void blockWorldEdges(Player player){
+        if(player.pos.x > width && player.isMoving){
+            player.pos.x -= player.speed * Gdx.graphics.getDeltaTime();
+        }
+        if(player.pos.x < 64 && player.isMoving){
+            player.pos.x += player.speed * Gdx.graphics.getDeltaTime();
+        }
+        if(player.pos.y > height && player.isMoving){
+            player.pos.y -= player.speed * Gdx.graphics.getDeltaTime();
+        }
+        if(player.pos.y < 64 && player.isMoving){
+            player.pos.y += player.speed * Gdx.graphics.getDeltaTime();
+        }
+
+    }
+    public void playerInteract(Player player){
+        blockWorldEdges(player);
     }
 
     public void draw(Renderer renderer, float dt){
         mapRenderer.render();
-        entitySystem.draw(renderer, dt);
+        entityManager.draw(renderer, dt);
     }
 
     public static Scene New(){return new Scene();}
@@ -74,13 +88,13 @@ public class Scene{
             if (mapRenderer != null) {
                 mapRenderer.dispose();
             }
-            if (entitySystem != null && entitySystem.entities != null) {
-                for (Entity entity : entitySystem.entities.values()) {
+            if (entityManager != null && entityManager.entities != null) {
+                for (Entity entity : entityManager.entities.values()) {
                     if (entity != null) {
                         entity.dispose();
                     }
                 }
-                entitySystem.entities.clear();
+                entityManager.entities.clear();
             }
             disposed = true;
         }

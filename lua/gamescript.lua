@@ -1,3 +1,4 @@
+
 ---
 --- Created by Bk.
 --- DateTime: 6/20/2025 7:19 AM
@@ -8,22 +9,24 @@ require('math')
 require('engine_globals')
 require('items')
 require('game')
+require('npc')
 Player = import('rune.editor.Player')
-GameState = import('rune.editor.GameScreen').runeGame
+
+
 
 ShapeRenderer = import('rune.editor.ShapeRenderer')
 Gdx = import('com.badlogic.gdx.Gdx')
 
-local sr = ShapeRenderer:New()
+local game = import('rune.editor.GameScreen').runeGame
+
 
 local camera = Camera(640,360)
 local player = Player:New()
 local scene = Scene:New()
-local game = GameState:New()
 
 
 
--- local dungeon = Scenes:DungeonMap("dungeon1")
+
 
 
 game:setScene(scene) ---setScene sets the active scene in the game, for ex. entering a dungeon switches the scene
@@ -35,17 +38,9 @@ game:addPlayer(player) ---important for the player to interact with the scene &&
 local viewBounds = newRect(0,0,0,0)
 
 
-local r = Renderer:New()
 
 
-local function random()
-    local ents = { Mobs:BlueSlime(), Mobs:GreenSlime(), Mobs:BlueSlime(),Mobs:OrangeSlime() }
-    for key, entity in pairs(ents) do
-        entity:setDirection(Direction:Random())
-        entity:setPos(math.random(0,1280 - 32),math.random(0,1280 - 32))
-    end
-    return ents
-end
+
 
 
 local function zoom()
@@ -59,18 +54,9 @@ local function zoom()
 end
 
 
-
-
-local function update()
+local function updateCamera()
     camera.position.y = player.pos.y + 16
     camera.position.x = player.pos.x + 16
-
-    viewBounds.x = camera.position.x / player.pos.x
-    viewBounds.y = camera.position.y / player.pos.y
-
-    viewBounds.height = camera.viewportHeight
-    viewBounds.width = camera.viewportWidth
-
 
     camera:update()
     game:setView(camera)
@@ -78,24 +64,31 @@ end
 
 
 
+local dungeon = Scenes:Dungeon("DungeonMap1")
+game:setScene(dungeon)
 
-local dmap = Scenes:DungeonMap("DungeonMap1")
+local n = Item:New { name = "health potion" }
 
-game:setScene(dmap)
+System.out:println(n.ref.effect)
+function main()
+    updateCamera()
+    if keyDown(Keys.T) then
+        System.out:println(player.inventory:size())
+        for key, ent in pairs(RandomEnts()) do
+            game:addEntity(ent)
+        end
+    end
 
 
+    if keyDown(Keys.L) then
 
-function draw()
-local dt = Gdx.graphics:getDeltaTime()
-     sr:start()
-     if keyDown(Keys.T) then
-         System.out:println(player.inventory:size())
-     end
-     update()
-     game:run(r, dt)
+        local newScene = Scene:New()
 
-     sr:rect(viewBounds.x, viewBounds.y, viewBounds.width, viewBounds.height)
-     sr:stop()
-     zoom()
+        player.pos.x = 70
+        player.direction = Direction.WEST
+        player.isMoving = true
+    end
+
+
+    zoom()
 end
-

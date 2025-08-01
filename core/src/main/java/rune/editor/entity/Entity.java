@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import net.dermetfan.utils.Pair;
 import rune.editor.Player;
 import rune.editor.Renderer;
 import rune.editor.types.DIRECTION;
@@ -60,12 +59,8 @@ public class Entity implements MobIface,Cloneable {
             altRegions = TextureRegion.split(texture, 32, 32)[1];
             direction = DIRECTION.SOUTH;
         }
-
-        if(type == EntityTypes.ANIMATED_OBJ){
-
-        }
-
     }
+
     public Entity(){}
 
     public static Entity staticObj(String name){
@@ -111,6 +106,8 @@ public class Entity implements MobIface,Cloneable {
     float stateTime;
 
 
+
+
     public void draw(Renderer renderer,float dt){
         update(dt);
 
@@ -121,6 +118,9 @@ public class Entity implements MobIface,Cloneable {
             renderer.sb.draw(getAnim().getKeyFrame(stateTime, true), pos.x, pos.y);
         }
     }
+
+
+
 
     public void update(float dt){
         if(appliedDamage > 0){
@@ -208,7 +208,7 @@ public class Entity implements MobIface,Cloneable {
         follow(this,player,dt);
     }
     public void unwalkableObject(Player player){
-        if(player.isMoving){
+        if(player.isMoving && player.bounds.overlaps(bounds)){
             switch (player.direction){
                 case WEST -> player.pos.x += player.speed * Gdx.graphics.getDeltaTime();
                 case EAST -> player.pos.x -= player.speed * Gdx.graphics.getDeltaTime();

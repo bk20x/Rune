@@ -4,7 +4,7 @@
 ---
 require('entity')
 require('lava')
-EntitySystem = import('rune.editor.system.EntitySystem')
+EntitySystem = import('rune.editor.system.EntityManagerr')
 entitySystem = java.new(EntitySystem)
 
 

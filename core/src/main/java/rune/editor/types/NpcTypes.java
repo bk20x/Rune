@@ -2,10 +2,10 @@ package rune.editor.types;
 
 public enum NpcTypes {
 
-    Merchant,
-    Villager,
-    Guard,
-    Story;
+    MERCHANT,
+    VILLAGER,
+    GUARD,
+    STORY;
 
 
     public static NpcTypes fromString(String s){

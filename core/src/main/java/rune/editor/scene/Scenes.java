@@ -9,9 +9,9 @@ public class Scenes {
 
 
 
-    public static DungeonMap DungeonMap(String name){
+    public static DungeonMap Dungeon(String name){
         return new DungeonMap(name);
     }
-
+    public static Scene New(String name){return new Scene(name);}
 
 }

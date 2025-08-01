@@ -1,21 +1,17 @@
 package rune.editor.maps;
 
-import net.dermetfan.gdx.physics.box2d.PositionController;
 import rune.editor.Player;
 import rune.editor.Renderer;
-import rune.editor.entity.Entity;
 import rune.editor.objects.Chest;
-import rune.editor.objects.Item;
 import rune.editor.scene.Scene;
 import rune.editor.types.Rarity;
 
 import java.util.ArrayList;
-import java.util.Vector;
 
 public class DungeonMap extends Scene {
 
 
-    private ArrayList<Chest> chests;
+    private final ArrayList<Chest> chests;
 
     public DungeonMap(String name) {
         super(name);
@@ -27,14 +23,15 @@ public class DungeonMap extends Scene {
     @Override
     public void draw(Renderer renderer, float dt){
         mapRenderer.render();
-        entitySystem.draw(renderer,dt);
         for (Chest chest : chests) {
             chest.draw(renderer, dt);
         }
+        entityManager.draw(renderer,dt);
     }
 
     @Override
     public void playerInteract(Player player){
+        super.playerInteract(player);
         for (Chest chest : chests) {
             chest.openChest(player);
         }
@@ -59,6 +56,12 @@ public class DungeonMap extends Scene {
     }
 
 
-
+    @Override
+    public void dispose() {
+        super.dispose();
+        for (Chest chest : chests) {
+            chest.dispose();
+        }
+    }
 
 }

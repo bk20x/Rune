@@ -1,0 +1,15 @@
+[
+  {"actor": "Boben",
+    "branches": [{"branch": "default",
+      "options": [{"option": "Hello faggot what kinda name is boben?",
+        "response": "Arr boy dont fuck with young boben",
+        "next": "test2"}]
+    },
+      {"branch": "test2",
+       "options": [{}]}]
+
+
+  }
+
+
+]

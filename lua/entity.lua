@@ -40,10 +40,22 @@ end
 
 
 ---@param mob Entity
-function onPlayerContact(mob,player)
+function OnPlayerContact(mob,player)
     if mob.bounds:overlaps(player.bounds) then
-        local hit = function()
 
-      end
+        local hit = function()
+            player.health = player.health - mob.damage
+        end
+
+      return hit()
    end
+end
+
+function RandomEnts()
+    local ents = { Mobs:BlueSlime(), Mobs:GreenSlime(), Mobs:BlueSlime(),Mobs:OrangeSlime(), Mobs:PurpleSlime() }
+    for key, entity in pairs(ents) do
+        entity:setDirection(Direction:Random())
+        entity:setPos(math.random(0,1280 - 32),math.random(0,1280 - 32))
+    end
+    return ents
 end

@@ -1,5 +1,7 @@
 package rune.editor;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.ScreenUtils;
 import rune.editor.scene.GameState;
@@ -15,10 +17,11 @@ public class GameScreen implements Screen {
     }
 
     public static GameState runeGame = new GameState();
+    public Renderer renderer;
     @Override
     public void show() {
 
-
+        renderer = new Renderer();
         loadLuaFile("lua/config.lua");
         loadLuaFile("lua/gamescript.lua");
 
@@ -28,10 +31,9 @@ public class GameScreen implements Screen {
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0.7f,0.7f,0.7f,1);
-
-        callLuaFunc("draw");
-
-
+        runeGame.run(renderer,delta);
+        callLuaFunc("main");
+        reloadScript();
     }
 
     @Override
@@ -76,7 +78,12 @@ public class GameScreen implements Screen {
         game.interop.callLuaFunc(funcName);
     }
 
+    public void reloadScript(){
+        if(Gdx.input.isKeyPressed(Input.Keys.R)){
+            loadLuaFile("lua/entity.lua");
+        }
 
+    }
 
 
 }

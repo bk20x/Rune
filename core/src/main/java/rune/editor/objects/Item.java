@@ -2,6 +2,7 @@ package rune.editor.objects;
 
 import com.badlogic.gdx.graphics.Texture;
 import net.dermetfan.utils.Pair;
+import rune.editor.Statics;
 import rune.editor.types.ItemTypes;
 import rune.editor.types.Rarity;
 
@@ -24,6 +25,7 @@ public class Item {
     public Pair<String,Integer> effect;
     public int defense;
     public int duration;
+    public int cost;
     public Item(){}
 
     public Item(String name, ItemTypes type){
@@ -54,10 +56,15 @@ public class Item {
         }
     }
     public void setType(ItemTypes type){this.type = type;}
+
     public void setRarity(Rarity rarity){this.rarity = rarity;}
+
     public void setDamage(float damage){this.damage = damage;}
+
     public void setAmount(int amount){this.amount = amount;}
+
     public void setBaseDamage(float baseDamage){this.baseDamage = baseDamage;}
+
     public void setEffect(String effect, Integer value){
         this.effect = new Pair<>(effect,value);
     }
@@ -68,6 +75,7 @@ public class Item {
     public static Item New(String name){
         return new Item(name);
     }
+
     public static Item New(){
         return new Item();
     }
@@ -80,10 +88,12 @@ public class Item {
 
     public Texture getTexture(){
         try {
-             return new Texture("items/"+name+".png");
+             return new Texture(Statics.itemPath + name + ".png");
         }
         catch (RuntimeException e){
-            return new Texture("items/" + "generic" + type.toString().toLowerCase() +".png");
+            return new Texture("shadow.png");
+            //return new Texture("items/" + "generic" + type.toString().toLowerCase() +".png");
         }
+
     }
 }

@@ -9,6 +9,8 @@
         "keyDown",
         "newRect",
         "draw",
-        "keyDownOnce"
+        "keyDownOnce",
+        "main",
+        "onPlayerContact"
     ]
 }

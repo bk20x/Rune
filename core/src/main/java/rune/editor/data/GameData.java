@@ -7,14 +7,17 @@ import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 import org.luaj.vm2.ast.Str;
 import rune.editor.Player;
+import rune.editor.magic.Spell;
 import rune.editor.npc.Npc;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
 import rune.editor.objects.Items;
 import rune.editor.quest.Quest;
+import rune.editor.scene.Scene;
 import rune.editor.types.ItemTypes;
 import rune.editor.types.NpcTypes;
 import rune.editor.types.Rarity;
+import rune.editor.types.SpellTypes;
 
 import java.io.FileReader;
 import java.io.Reader;
@@ -97,7 +100,7 @@ public class GameData {
 
             JsonObject inventoryData = playerData.get("equipment").getAsJsonObject();
 
-            String currentWeapon = inventoryData.get("current_weapon").getAsString();
+            String currentWeapon = inventoryData.get("equipped weapon").getAsString();
             String currentGauntlets = inventoryData.get("hands").getAsString();
             String currentHelmet = inventoryData.get("head").getAsString();
             String currentChest = inventoryData.get("torso").getAsString();
@@ -135,6 +138,7 @@ public class GameData {
 
             loadPlayerStats(player);
             loadPlayerQuests(player);
+
         } catch ( RuntimeException e ){
             System.err.println("Error parsing save file: " + e);
         }
@@ -178,6 +182,7 @@ public class GameData {
             if (itemData.get("name").getAsString().equals(i.name)) {
                 i.setType(ItemTypes.fromString(itemData.get("type").getAsString()));
                 i.setRarity(Rarity.fromString(itemData.get("rarity").getAsString()));
+                i.cost = itemData.get("cost").getAsInt();
                 switch (i.type){
                     case WEAPON -> i.setBaseDamage(itemData.get("damage").getAsFloat());
                     case POTION -> {
@@ -195,7 +200,29 @@ public class GameData {
             }
         }
     }
+    public static void setSpellValues(Spell s){
+        for (JsonElement element : arrayFromFile("json/spells.json")) {
+            JsonObject spellData = element.getAsJsonObject();
+            if(spellData.get("name").getAsString().equals(s.name)){
+                s.type = SpellTypes.fromString(spellData.get("type").getAsString());
+                s.damage = spellData.get("damage").getAsFloat();
+                s.range = spellData.get("range").getAsFloat();
+                s.travelSpeed = spellData.get("travel speed").getAsFloat();
+                if(s.range != 0){
+                    s.isRanged = true;
+                }
+            }
+        }
+    }
 
+    public static void setSceneValues(Scene s){
+        for(JsonElement element : arrayFromFile("json/scenes.json")){
+            JsonObject sceneData = element.getAsJsonObject();
+            if(sceneData.get("scene").getAsString().equals(s.name)){
+
+            }
+        }
+    }
 
 
 }

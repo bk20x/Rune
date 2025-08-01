@@ -12,6 +12,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
+import rune.editor.objects.Items;
 import rune.editor.quest.Quest;
 import rune.editor.scene.GameState;
 import rune.editor.system.Inventory;
@@ -33,12 +34,15 @@ public class Player {
     private final Texture meleeSheet;
     private final Texture shadow;
     public final HashMap<String,Integer> attributeLevels = new HashMap<>();
+
     {
         attributeLevels.put("strength", 10);
         attributeLevels.put("intelligence", 10);
         attributeLevels.put("charisma", 10);
         attributeLevels.put("luck",10);
     }
+
+
     private TextureRegion[] textureFrames;
     public Vector2 pos;
     public DIRECTION direction;
@@ -47,7 +51,9 @@ public class Player {
     private float delta;
     public float health = 100f;
     public float maxHealth = 100f;
-    public boolean isMoving, isMelee,isAlive = true,isWeaponEquipped;
+    public boolean isAlive = true;
+    public boolean isMoving,isMelee,isWeaponEquipped = false;
+
     public Rectangle bounds = new Rectangle(0,0,32,32);
     public final Inventory inventory = new Inventory();
     public Circle range;
@@ -81,7 +87,11 @@ public class Player {
 
 
         loadPlayerSaveFile(this);
-        activeQuest = activeQuests.get(0);
+        setActiveQuest(activeQuests.get(0));
+        addItem(Items.Weapon("drained hero sword"));
+
+
+        System.out.println(isWeaponEquipped);
     }
 
     private void input(float dt){
@@ -111,7 +121,6 @@ public class Player {
         if(Gdx.input.isKeyJustPressed(keyBinds.get("MELEE")) && isWeaponEquipped && !isMelee){
             isMelee = true;
             delta = 0;
-
         }
 
         if(Gdx.input.isKeyPressed(Input.Keys.B)){
@@ -184,9 +193,9 @@ public class Player {
         if(isMelee){
             final float shadowXDisplaced = pos.x + 16f;
             renderer.sb.draw(shadow, shadowXDisplaced, pos.y, shadow.getWidth() - 1,shadow.getHeight());
-            renderer.sb.draw(getMeleeAnim(delta).getKeyFrame(delta, isMelee), pos.x, pos.y);
+            renderer.sb.draw(getMeleeAnim().getKeyFrame(delta, isMelee), pos.x, pos.y);
 
-            if(getMeleeAnim(delta).isAnimationFinished(delta)){
+            if(getMeleeAnim().isAnimationFinished(delta)){
                 isMelee = false;
                 hitEntities.clear();
             }
@@ -209,6 +218,9 @@ public class Player {
         if(activeQuest != null) {
             activeQuest.act(this);
         }
+        if(!isWeaponEquipped){
+            isMelee = false;
+        }
         activeQuests.removeIf(quest -> quest.complete);
 
         if(!isAlive){die();}
@@ -218,7 +230,7 @@ public class Player {
 
 
 
-    private Animation<TextureRegion> getMeleeAnim(float delta){
+    private Animation<TextureRegion> getMeleeAnim(){
         textureFrames = TextureRegion.split(meleeSheet, 48, 52)[0];
         return switch (direction){
             case SOUTH ->  new Animation<>(0.10f, textureFrames[2]);
@@ -300,8 +312,8 @@ public class Player {
     }
 
     public void unequipWeapon(){
-        this.currentWeapon = null;
         isWeaponEquipped = false;
+        this.currentWeapon = null;
     }
     public void equipWeapon(Item i){
         currentWeapon = i;
@@ -328,10 +340,10 @@ public class Player {
                 json.addProperty("quest", quest.name);
                 json.addProperty("complete", quest.complete);
                 JsonArray jJournalEntries = new JsonArray();
-                quest.journalEntries.entrySet().stream().forEach(entry -> {
+                quest.journalEntries.forEach((key, value) -> {
                     JsonObject jJournalEntry = new JsonObject();
-                    jJournalEntry.addProperty("date", entry.getKey());
-                    jJournalEntry.addProperty("entry", entry.getValue());
+                    jJournalEntry.addProperty("date", key);
+                    jJournalEntry.addProperty("entry", value);
                     jJournalEntries.add(jJournalEntry);
                 });
                 json.add("entries", jJournalEntries);
@@ -395,7 +407,7 @@ public class Player {
             }
                 json.add("skills", jSkills);
                 json.add("equipment", jEquipment);
-               return json;
+                return json;
 
             }catch (Exception e){
             System.err.println("err at `Player::toJson()`");

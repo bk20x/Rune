@@ -64,6 +64,7 @@ public class Slime extends Entity implements MobIface {
         return new Slime("green");
     }
     public static Slime Purple(){return new Slime("purple");}
+
     @Override
     public void draw(Renderer renderer, float dt){
         stateTime += Gdx.graphics.getDeltaTime(); if(stateTime > 10) stateTime = 0;
@@ -126,7 +127,7 @@ public class Slime extends Entity implements MobIface {
                     mob.pos.y += mob.speed * dt;
                 }
 
-                if(player.direction == DIRECTION.EAST) mob.direction = DIRECTION.EAST;
+                //if(player.direction == DIRECTION.EAST) mob.direction = DIRECTION.EAST;
 
             }
             if(player.pos.x < mob.pos.x){

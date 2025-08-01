@@ -2,13 +2,9 @@ package rune.editor.scene;
 
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import org.jetbrains.annotations.NotNull;
 import rune.editor.Player;
 import rune.editor.Renderer;
 import rune.editor.entity.Entity;
-import rune.editor.maps.DungeonMap;
-
-
 
 
 public class GameState {
@@ -19,29 +15,26 @@ public class GameState {
     public static void setActiveQuest(String questName) {
         activeQuest = questName;
     }
-
-
     public Scene scene;
-    private Player player;
-    private final Renderer renderer;
+    public Player player;
+    public final Renderer renderer;
     public boolean isSceneActive = true;
+    public OrthographicCamera camera;
+    public SceneTransitionManager transitionManager;
 
-
-    private DungeonMap dmap;
     public GameState(){
         renderer = new Renderer();
-
-
-
-
+        transitionManager = new SceneTransitionManager();
     }
 
     public void addEntity(Entity e){
-        scene.entitySystem.add(e);
+        scene.entityManager.add(e);
     }
     public void addPlayer(Player player){
         this.player = player;
     }
+
+
 
     public synchronized void setScene(Scene scene) {
         renderer.flush();
@@ -58,34 +51,78 @@ public class GameState {
         isSceneActive = true;
     }
 
+    public void transitionToScene(Scene targetScene, String exitDirection) {
+        if (!transitionManager.isTransitioning()) {
+            transitionManager.startTransition(targetScene, exitDirection);
+        }
+    }
+
 
     public void setTint(Color color){
         renderer.sb.setColor(color);
         scene.mapRenderer.getBatch().setColor(color);
     }
+
     public void setView(OrthographicCamera camera){
-        scene.setView(camera);
+        if (this.camera == null) {
+            this.camera = camera;
+        }
+        scene.setView(this.camera);
+        renderer.setView(this.camera);
     }
 
-    public void run(@NotNull Renderer renderer, float dt){
+    public void run(Renderer renderer, float dt){
+        boolean transitionComplete = transitionManager.update(dt,player,this);
+
+
+        if (camera != null) {
+            renderer.setView(camera);
+            this.renderer.setView(camera);
+            if (scene != null) {
+                scene.setView(camera);
+            }
+        }
+
         renderer.start();
         if(isSceneActive){
             scene.update();
-            scene.playerInteract(player);
-
-            if(player.isMelee) {
-                scene.entitySystem.battle(player);
-            }
-
             scene.draw(renderer,dt);
-            player.draw(renderer,dt);
-            for (int i : scene.entitySystem.entities.keySet()) {
-                scene.entitySystem.entities.get(i).followPlayer(player,dt);
+            if(player != null) {
+                scene.playerInteract(player);
+                if (player.isMelee) {
+                    scene.entityManager.combat(player);
+                }
+                if(transitionComplete){
+                    player.draw(renderer, dt);
+                }
+
+                if (!transitionManager.isTransitioning()) {
+                    checkSceneTransitions();
+                }
+                for (int i : scene.entityManager.entities.keySet()) {
+                    scene.entityManager.entities.get(i).followPlayer(player, dt);
+                }
             }
         }
 
 
+        transitionManager.render();
         renderer.stop();
+
+
+
+    }
+
+
+    private void checkSceneTransitions() {
+        if (player == null || scene == null) return;
+
+
+        if (player.pos.x < 64 && player.isMoving && player.direction == rune.editor.types.DIRECTION.WEST) {
+
+            Scene newScene = new Scene();
+            transitionToScene(newScene, "left");
+        }
     }
 
     public static GameState New(){return new GameState();}

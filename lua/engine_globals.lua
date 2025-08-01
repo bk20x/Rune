@@ -9,3 +9,7 @@ Input = import('com.badlogic.gdx.Gdx').input
 Keys = import('com.badlogic.gdx.Input.Keys')
 Game = import('rune.editor.Game')
 Renderer = import('rune.editor.Renderer')
+
+function getDeltaTime()
+    return Gdx.graphics:getDeltaTime()
+end

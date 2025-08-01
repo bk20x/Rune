@@ -7,12 +7,12 @@ import rune.editor.entity.Entity;
 import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class EntitySystem {
+public class EntityManager {
 
     public final ConcurrentHashMap<Integer, Entity> entities;
     private final ArrayList<Entity> newEnts;
 
-    public EntitySystem(){
+    public EntityManager(){
         entities = new ConcurrentHashMap<>();
         newEnts = new ArrayList<>();
     }
@@ -32,7 +32,7 @@ public class EntitySystem {
     }
 
 
-    public void battle(Player player){
+    public void combat(Player player){
         for (int i : entities.keySet()){
             if(!entities.get(i).alive){
                 player.lastEntityKilled = entities.get(i);
@@ -42,7 +42,7 @@ public class EntitySystem {
             if(player.hitMob(entities.get(i)) && entities.get(i).alive){
                 entities.get(i).collided(player.wepRec);
                 entities.get(i).appliedDamage = player.currentWeapon.damage;
-
+                System.out.println("Hit mob " + entities.get(i).appliedDamage);
             }
         }
     }
