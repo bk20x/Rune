@@ -112,6 +112,8 @@ public class SceneTransitionManager {
 
     }
 
+
+
     public void renderTransitionEffect() {
         if (currentState != TransitionState.NONE) {
             Renderer renderer = new Renderer();

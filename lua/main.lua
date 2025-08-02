@@ -18,24 +18,7 @@ local Player = import('rune.editor.Player')
 local game = import('rune.editor.GameScreen').gameState
 
 
-
-
-
-
-
-
-
----important for the player to interact with the scene && the players draw method is called with game:render()
-
-
-
-
 local viewBounds = newRect(0,0,0,0)
-
-
-
-
-
 
 
 local function zoom()

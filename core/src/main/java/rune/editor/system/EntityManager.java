@@ -42,7 +42,6 @@ public class EntityManager {
             if(player.hitMob(entities.get(i)) && entities.get(i).alive){
                 entities.get(i).collided(player.wepRec);
                 entities.get(i).appliedDamage = player.currentWeapon.damage;
-                System.out.println("Hit mob " + entities.get(i).appliedDamage);
             }
         }
     }

@@ -96,10 +96,6 @@ public class GameState {
                 if(transitionComplete){
                     player.draw(renderer, dt);
                 }
-                if(Gdx.input.isKeyPressed(Input.Keys.Y)){
-                    GameData.writeSaveFile(player);
-
-                }
                 if (!transitionManager.isTransitioning()) {
                     checkSceneTransitions();
                 }
