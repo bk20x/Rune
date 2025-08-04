@@ -4,10 +4,14 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import rune.editor.Player;
 import rune.editor.Renderer;
 import rune.editor.data.GameData;
 import rune.editor.entity.Entity;
+import rune.editor.gui.GuiLayout;
 
 
 public class GameState {
@@ -25,8 +29,11 @@ public class GameState {
     public OrthographicCamera camera;
     public SceneTransitionManager transitionManager;
 
+    public GuiLayout guiLayout;
+
     public GameState(){
         renderer = new Renderer();
+        guiLayout = new GuiLayout();
         transitionManager = new SceneTransitionManager();
     }
 
@@ -72,6 +79,13 @@ public class GameState {
         renderer.setView(this.camera);
     }
 
+
+    public Vector2 getMousePos(){
+        Vector3 screenCoords = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+        Vector3 unprojected = camera.unproject(screenCoords);
+        return new Vector2(unprojected.x, unprojected.y);
+    }
+
     public void run(Renderer renderer, float dt){
         boolean transitionComplete = transitionManager.updateTransitionState(dt,player,this);
 
@@ -89,6 +103,7 @@ public class GameState {
             scene.update();
             scene.draw(renderer,dt);
             if(player != null) {
+
                 scene.playerInteract(player);
                 if (player.isMelee) {
                     scene.entityManager.combat(player);

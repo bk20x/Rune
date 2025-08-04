@@ -209,7 +209,6 @@ public class Player {
     }
 
     public void update(float dt){
-        System.out.println(inventory.sortedInventory);
         input(dt);
         if(!isAlive){
             die();
