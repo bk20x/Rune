@@ -1,13 +1,13 @@
 {"name": "bk20",
   "posX": 600,
   "posY": 600,
+  "max health" : 100,
   "health": 100,
   "experience": 0,
   "activeQuest": "lost",
   "skills": {"strength": 10,
               "intelligence": 10,
               "charisma": 10,
-              "luck": 10
-              }
+              "luck": 10}
 }
 

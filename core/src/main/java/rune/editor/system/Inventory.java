@@ -29,6 +29,9 @@ public class Inventory {
 
     public void addItems(Vector<Item> items){
         items.forEach(inventory::add);
+        for(Item i : items){
+            sortedInventory.put(i.name, sortedInventory.getOrDefault(i.name, 0) + i.amount);
+        }
     }
 
     public void addItems(Item... items){
