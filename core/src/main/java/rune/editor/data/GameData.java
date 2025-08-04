@@ -100,6 +100,8 @@ public class GameData {
             player.experience = experience;
             player.pos.x = playerData.get("posX").getAsFloat();
             player.pos.y = playerData.get("posY").getAsFloat();
+            player.maxHealth = playerData.get("max health").getAsFloat();
+            player.health = playerData.get("health").getAsFloat();
 
             JsonObject inventoryData =  objFromFile("json/player/inventory.json", JsonObject.class);
             JsonObject equipmentSlots = inventoryData.get("equipment slots").getAsJsonObject();
@@ -216,7 +218,7 @@ public class GameData {
     }
 
     public static void writeInventoryFile(Player player){
-        JsonObject inventoryJson = player.equipmentJson();
+        JsonObject inventoryJson = player.inventoryJson();
         try (FileOutputStream fos = new FileOutputStream("json/player/inventory.json")){
             fos.write(inventoryJson.toString().getBytes());
         }catch (IOException e){

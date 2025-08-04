@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
@@ -88,10 +89,11 @@ public class Player {
 
         loadPlayerSaveFile(this);
         setActiveQuest(activeQuests.get(0));
-        addItem(Items.Weapon("drained hero sword"));
+
 
 
         System.out.println(isWeaponEquipped);
+        System.out.println(helmet.name);
     }
 
     private void input(float dt){
@@ -207,6 +209,7 @@ public class Player {
     }
 
     public void update(float dt){
+        System.out.println(inventory.sortedInventory);
         input(dt);
         if(!isAlive){
             die();
@@ -354,10 +357,29 @@ public class Player {
         }
         return new JsonObject();
     }
-
-    public JsonObject equipmentJson(){
+    public JsonObject inventoryJson(){
         try {
             JsonObject json = new JsonObject();
+            JsonArray jInventory = new JsonArray(inventory.getInventory().size());
+
+
+            json.add("equipment slots", equipmentJson());
+
+            inventory.sortedInventory.forEach((item, amount) -> {
+                JsonObject jInventoryEntry = new JsonObject();
+                jInventoryEntry.addProperty("name", item);
+                jInventoryEntry.addProperty("amount", amount);
+                jInventory.add(jInventoryEntry);
+            });
+            json.add("items", jInventory);
+            return json;
+        }catch (Exception e){
+            System.err.println("err at `Player::inventoryJson()`");
+        }
+        return new JsonObject();
+    }
+    public JsonObject equipmentJson(){
+        try {
             JsonObject equipmentSlots = new JsonObject();
             if(currentWeapon != null) {
                 equipmentSlots.addProperty("melee",currentWeapon.name );
@@ -384,8 +406,7 @@ public class Player {
             }else {
                 equipmentSlots.addProperty("boots", "");
             }
-            json.add("equipment slots", equipmentSlots);
-            return json;
+            return equipmentSlots;
         }catch (Exception e){
             System.err.println("err at `Player::equipmentJson()`");
         }
@@ -402,7 +423,8 @@ public class Player {
             json.addProperty("name", name);
             json.addProperty("posX", pos.x);
             json.addProperty("posY", pos.y);
-            json.addProperty("health", health);
+            json.addProperty("max health", maxHealth);
+            json.addProperty("current health", health);
             json.addProperty("experience", experience);
             if (activeQuest != null) {
                 json.addProperty("activeQuest", activeQuest.name);

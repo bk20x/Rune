@@ -27,6 +27,7 @@ public class Item {
     public Item(String name, ItemTypes type){
         this.name = name;
         this.type = type;
+        this.amount = 1;
         setItemValues(this);
         this.texture = getTexture();
         if(type == ItemTypes.WEAPON){
@@ -46,6 +47,7 @@ public class Item {
 
     public Item(String name){
         this.name = name;
+        this.amount = 1;
         setItemValues(this);
         if(type == ItemTypes.WEAPON){
             damage = baseDamage;

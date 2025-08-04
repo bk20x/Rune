@@ -52,13 +52,13 @@ public class Scene{
 
 
     public void blockWorldEdges(Player player){
-        if(player.pos.x > width && player.isMoving){
+        if(player.pos.x > width - 84 && player.isMoving){
             player.pos.x -= player.speed * Gdx.graphics.getDeltaTime();
         }
         if(player.pos.x < 64 && player.isMoving){
             player.pos.x += player.speed * Gdx.graphics.getDeltaTime();
         }
-        if(player.pos.y > height && player.isMoving){
+        if(player.pos.y > height - 72 && player.isMoving){
             player.pos.y -= player.speed * Gdx.graphics.getDeltaTime();
         }
         if(player.pos.y < 64 && player.isMoving){
@@ -68,6 +68,8 @@ public class Scene{
     }
     public void playerInteract(Player player){
         blockWorldEdges(player);
+
+
     }
 
     public void draw(Renderer renderer, float dt){
