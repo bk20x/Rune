@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.utils.ScreenUtils;
+import rune.editor.external_lib.NimLib;
 import rune.editor.scene.GameState;
 
 /** First screen of the application. Displayed after the application is created. */
@@ -18,6 +19,7 @@ public class GameScreen implements Screen {
 
     public static final GameState gameState = new GameState();
     public Renderer renderer;
+
     @Override
     public void show() {
 
@@ -30,6 +32,9 @@ public class GameScreen implements Screen {
 
     @Override
     public void render(float delta) {
+
+
+
         ScreenUtils.clear(0.7f,0.7f,0.7f,1);
         gameState.run(renderer,delta);
         callLuaFunc("main");

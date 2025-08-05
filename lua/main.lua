@@ -56,13 +56,12 @@ if game.player == nil then
     game:addPlayer(player)
 end
 
-local n = Item:New { name = "health potion" }
+
 
 
 function main()
     updateCamera()
     if keyDown(Keys.T) then
-        System.out:println(player.inventory:size())
         for key, ent in pairs(RandomEnts()) do
             game:addEntity(ent)
         end

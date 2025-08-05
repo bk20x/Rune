@@ -9,11 +9,9 @@ import com.badlogic.gdx.math.Circle;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import rune.editor.entity.Entity;
 import rune.editor.objects.Item;
-import rune.editor.objects.Items;
 import rune.editor.quest.Quest;
 import rune.editor.scene.GameState;
 import rune.editor.system.Inventory;
@@ -34,13 +32,13 @@ public class Player {
     private final Texture textureSheet;
     private final Texture meleeSheet;
     private final Texture shadow;
-    public final HashMap<String,Integer> attributeLevels = new HashMap<>();
+    public final HashMap<String, Integer> attributeLevels = new HashMap<>();
 
     {
         attributeLevels.put("strength", 10);
         attributeLevels.put("intelligence", 10);
         attributeLevels.put("charisma", 10);
-        attributeLevels.put("luck",10);
+        attributeLevels.put("luck", 10);
     }
 
 
@@ -53,13 +51,13 @@ public class Player {
     public float health = 100f;
     public float maxHealth = 100f;
     public boolean isAlive = true;
-    public boolean isMoving,isMelee,isWeaponEquipped = false;
+    public boolean isMoving, isMelee, isWeaponEquipped = false;
 
-    public Rectangle bounds = new Rectangle(0,0,32,32);
+    public Rectangle bounds = new Rectangle(0, 0, 32, 32);
     public final Inventory inventory = new Inventory();
     public Circle range;
 
-    public ArrayList<Quest> activeQuests;
+    public ArrayList<Quest> quests;
 
     public Quest activeQuest;
     public Entity lastEntityKilled;
@@ -72,33 +70,31 @@ public class Player {
     public Item helmet;
     public Item boots;
     public Item hands;
-    public Player(){
+
+    public Player() {
         textureSheet = new Texture("player.png");
         meleeSheet = new Texture("heromelee.png");
         shadow = new Texture("shadow.png");
 
         textureFrames = TextureRegion.split(textureSheet, 32, 32)[0];
-        pos = new Vector2(0,0);
+        pos = new Vector2(0, 0);
 
         direction = DIRECTION.SOUTH;
 
 
-        activeQuests = new ArrayList<>();
-        range = new Circle(pos.x,pos.y,32);
+        quests = new ArrayList<>();
+        range = new Circle(pos.x, pos.y, 32);
 
 
         loadPlayerSaveFile(this);
-        setActiveQuest(activeQuests.get(0));
-
-
-
+        System.out.println(activeQuest);
         System.out.println(isWeaponEquipped);
         System.out.println(helmet.name);
     }
 
-    private void input(float dt){
+    private void input(float dt) {
         isMoving = false;
-        if(!isMelee) {
+        if (!isMelee) {
             if (Gdx.input.isKeyPressed(keyBinds.get("UP"))) {
                 pos.y += speed * dt;
                 direction = DIRECTION.NORTH;
@@ -122,181 +118,191 @@ public class Player {
                 delta = 0;
             }
         }
-        if(Gdx.input.isKeyPressed(Input.Keys.B)){
+        if (Gdx.input.isKeyPressed(Input.Keys.B)) {
             equipWeapon(inventory.getInventory().firstElement());
             System.out.println(inventory.getInventory().firstElement().name);
         }
 
 
-        if(Gdx.input.isKeyPressed(Input.Keys.F)){
+        if (Gdx.input.isKeyPressed(Input.Keys.F)) {
             unequipWeapon();
         }
 
     }
 
 
-    public Rectangle wepRec = new Rectangle(0,0,32,32);
+    public Rectangle wepRec = new Rectangle(0, 0, 32, 32);
 
-    public boolean hitMob(Entity mob){
-        wepRec.set(0,0,0,0);
-        if(hitEntities.contains(mob.id())) {
+    public boolean hitMob(Entity mob) {
+        wepRec.set(0, 0, 0, 0);
+        if (hitEntities.contains(mob.id())) {
             return false;
         }
 
-        if(isWeaponEquipped && isMelee) {
+        if (isWeaponEquipped && isMelee) {
             switch (direction) {
                 case NORTH -> {
-                    wepRec.set(getX(), getY() + 16, 32,38);
-                    if(wepRec.overlaps(mob.bounds)) {
+                    wepRec.set(getX(), getY() + 16, 32, 38);
+                    if (wepRec.overlaps(mob.bounds)) {
                         mob.hurt = true;
-                        wepRec.set(0,0,0,0);
+                        wepRec.set(0, 0, 0, 0);
                         hitEntities.add(mob.id());
                         return true;
                     }
                 }
                 case WEST -> {
-                    wepRec.set(getX() - 16, getY(),  38,32);
-                    if(wepRec.overlaps(mob.bounds)) {
+                    wepRec.set(getX() - 16, getY(), 38, 32);
+                    if (wepRec.overlaps(mob.bounds)) {
                         mob.hurt = true;
-                        wepRec.set(0,0,0,0);
+                        wepRec.set(0, 0, 0, 0);
                         hitEntities.add(mob.id());
                         return true;
                     }
                 }
                 case EAST -> {
-                    wepRec.set(getX() + 16 , getY(), 38,32);
-                    if(wepRec.overlaps(mob.bounds)) {
+                    wepRec.set(getX() + 16, getY(), 38, 32);
+                    if (wepRec.overlaps(mob.bounds)) {
                         mob.hurt = true;
-                        wepRec.set(0,0,0,0);
+                        wepRec.set(0, 0, 0, 0);
                         hitEntities.add(mob.id());
                         return true;
                     }
                 }
                 case SOUTH -> {
-                    wepRec.set(getX(), getY() - 16, 32,38);
-                    if(wepRec.overlaps(mob.bounds)) {
+                    wepRec.set(getX(), getY() - 16, 32, 38);
+                    if (wepRec.overlaps(mob.bounds)) {
                         mob.hurt = true;
-                        wepRec.set(0,0,0,0);
+                        wepRec.set(0, 0, 0, 0);
                         hitEntities.add(mob.id());
                         return true;
                     }
                 }
             }
         }
-        wepRec.set(0,0,0,0);
+        wepRec.set(0, 0, 0, 0);
         return false;
     }
-    public void draw(Renderer renderer,float dt){
-        delta += Gdx.graphics.getDeltaTime();  if(delta > 10) delta = 0;
+
+    public void draw(Renderer renderer, float dt) {
+        delta += Gdx.graphics.getDeltaTime();
+        if (delta > 10) delta = 0;
         update(dt);
-        if(isMelee){
+        if (isMelee) {
             final float shadowXDisplaced = pos.x + 16f;
-            renderer.sb.draw(shadow, shadowXDisplaced, pos.y, shadow.getWidth() - 1,shadow.getHeight());
+            renderer.sb.draw(shadow, shadowXDisplaced, pos.y, shadow.getWidth() - 1, shadow.getHeight());
             renderer.sb.draw(getMeleeAnim().getKeyFrame(delta, isMelee), pos.x, pos.y);
 
-            if(getMeleeAnim().isAnimationFinished(delta)){
+            if (getMeleeAnim().isAnimationFinished(delta)) {
                 isMelee = false;
                 hitEntities.clear();
             }
 
-        }else {
+        } else {
             final float shadowX = pos.x + 8.8f;
             final float shadowY = pos.y - 4;
-            renderer.sb.draw(shadow, shadowX, shadowY,shadow.getWidth() - 1 ,shadow.getHeight());
+            renderer.sb.draw(shadow, shadowX, shadowY, shadow.getWidth() - 1, shadow.getHeight());
             renderer.sb.draw(getAnim(delta).getKeyFrame(delta, isMoving), pos.x, pos.y);
         }
 
     }
 
-    public void update(float dt){
+    public void update(float dt) {
         input(dt);
-        if(!isAlive){
+        if (!isAlive) {
             die();
         }
-        if(isMoving){
-            bounds.setPosition(pos.x,pos.y);
-            range.setPosition(pos.x,pos.y);
+        if (isMoving) {
+            bounds.setPosition(pos.x, pos.y);
+            range.setPosition(pos.x, pos.y);
         }
-        if(activeQuest != null) {
+        if (activeQuest != null) {
             activeQuest.act(this);
         }
-        if(!isWeaponEquipped){
+        if (!isWeaponEquipped) {
             isMelee = false;
         }
-        activeQuests.removeIf(quest -> quest.complete);
+        quests.removeIf(quest -> quest.complete);
     }
 
 
-
-
-
-    private Animation<TextureRegion> getMeleeAnim(){
+    private Animation<TextureRegion> getMeleeAnim() {
         textureFrames = TextureRegion.split(meleeSheet, 48, 52)[0];
-        return switch (direction){
-            case SOUTH ->  new Animation<>(0.10f, textureFrames[2]);
-            case NORTH -> new Animation<>(0.10f, textureFrames[3],textureFrames[4],textureFrames[3]);
-            case WEST -> new Animation<>(0.10f, textureFrames[0],textureFrames[5]);
-            case EAST -> new Animation<>(0.10f, textureFrames[1],textureFrames[6]);
+        return switch (direction) {
+            case SOUTH -> new Animation<>(0.10f, textureFrames[2]);
+            case NORTH -> new Animation<>(0.10f, textureFrames[3], textureFrames[4], textureFrames[3]);
+            case WEST -> new Animation<>(0.10f, textureFrames[0], textureFrames[5]);
+            case EAST -> new Animation<>(0.10f, textureFrames[1], textureFrames[6]);
         };
     }
 
 
-
-    public Animation<TextureRegion> getAnim(float delta){
-        if(direction == EAST || direction == WEST){
+    public Animation<TextureRegion> getAnim(float delta) {
+        if (direction == EAST || direction == WEST) {
             textureFrames = TextureRegion.split(textureSheet, 32, 32)[1];
-        }
-        else if(direction == DIRECTION.NORTH || direction == DIRECTION.SOUTH){
+        } else if (direction == DIRECTION.NORTH || direction == DIRECTION.SOUTH) {
             textureFrames = TextureRegion.split(textureSheet, 32, 32)[0];
         }
-        return switch (direction){
-            case SOUTH -> new Animation<>(0.25f, textureFrames[2],textureFrames[1],textureFrames[0]);
-            case NORTH -> new Animation<>(0.25f, textureFrames[5],textureFrames[4],textureFrames[3]);
-            case WEST -> new Animation<>(0.25f, textureFrames[5],textureFrames[4],textureFrames[5]);
-            case EAST -> new Animation<>(0.25f, textureFrames[2],textureFrames[3],textureFrames[2]);
+        return switch (direction) {
+            case SOUTH -> new Animation<>(0.25f, textureFrames[2], textureFrames[1], textureFrames[0]);
+            case NORTH -> new Animation<>(0.25f, textureFrames[5], textureFrames[4], textureFrames[3]);
+            case WEST -> new Animation<>(0.25f, textureFrames[5], textureFrames[4], textureFrames[5]);
+            case EAST -> new Animation<>(0.25f, textureFrames[2], textureFrames[3], textureFrames[2]);
         };
     }
-    public void completeQuest(){
+
+    public void completeQuest() {
         activeQuest.complete = true;
         activeQuest = null;
         GameState.activeQuest = null;
     }
-    public void addQuest(Quest quest){
-        activeQuests.add(quest);
+
+    public void addQuest(Quest quest) {
+        quests.add(quest);
     }
-    public void setActiveQuest(Quest quest){
+
+    public void setActiveQuest(Quest quest) {
         activeQuest = quest;
         GameState.setActiveQuest(activeQuest.name);
     }
 
-    private void die(){
+    private void die() {
         isMelee = false;
         isMoving = false;
         hitEntities.clear();
 
-        if(experience > 0) {
+        if (experience > 0) {
             experience = Math.max(0, experience - 50);
         }
     }
 
-    public static Player New(){
+    public static Player New() {
         return new Player();
     }
-    public void setSpeed(float speed){this.speed = speed;}
-    public float getX(){return pos.x;}
-    public float getY(){return pos.y;}
+
+    public void setSpeed(float speed) {
+        this.speed = speed;
+    }
+
+    public float getX() {
+        return pos.x;
+    }
+
+    public float getY() {
+        return pos.y;
+    }
 
     public boolean takeDamage(float damage) {
         health -= damage;
 
-        if(health <= 0) {
+        if (health <= 0) {
             health = 0;
             isAlive = false;
         }
 
         return isAlive;
     }
-    public void addItem(Item i){
+
+    public void addItem(Item i) {
         inventory.addItems(i);
     }
 
@@ -304,40 +310,43 @@ public class Player {
         health += amount;
 
     }
-    public void equipWeapon(String weaponName){
-        if(this.inventory.getItem(weaponName) != null){
+
+    public void equipWeapon(String weaponName) {
+        if (this.inventory.getItem(weaponName) != null) {
             this.currentWeapon = inventory.getItem(weaponName);
             isWeaponEquipped = true;
         }
     }
 
-    public void unequipWeapon(){
+    public void unequipWeapon() {
         isWeaponEquipped = false;
         this.currentWeapon = null;
     }
-    public void equipWeapon(Item i){
+
+    public void equipWeapon(Item i) {
         currentWeapon = i;
         isWeaponEquipped = true;
-        if(!inventory.getInventory().contains(i)){
+        if (!inventory.getInventory().contains(i)) {
             addItem(i);
         }
     }
-    public void consumePotion(Item potion){
-        if(potion.effect.getKey().equals("health")){
+
+    public void consumePotion(Item potion) {
+        if (potion.effect.getKey().equals("health")) {
             heal(potion.effect.getValue());
         }
-        if(potion.effect.getKey().equals("strength")){
-            attributeLevels.put("strength",  attributeLevels.get("strength") + potion.effect.getValue());
+        if (potion.effect.getKey().equals("strength")) {
+            attributeLevels.put("strength", attributeLevels.get("strength") + potion.effect.getValue());
         }
-        if(potion.effect.getKey().equals("intelligence")){
+        if (potion.effect.getKey().equals("intelligence")) {
             attributeLevels.put("intelligence", attributeLevels.get("intelligence") + potion.effect.getValue());
         }
     }
 
-    public JsonObject journalJson(){
+    public JsonObject journalJson() {
         try {
             JsonObject json = new JsonObject();
-            for (Quest quest : activeQuests) {
+            for (Quest quest : quests) {
                 json.addProperty("quest", quest.name);
                 json.addProperty("complete", quest.complete);
                 JsonArray jJournalEntries = new JsonArray();
@@ -350,13 +359,13 @@ public class Player {
                 json.add("entries", jJournalEntries);
                 return json;
             }
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.err.println("err at `Player::journalJson()`");
         }
         return new JsonObject();
     }
-    public JsonObject inventoryJson(){
+
+    public JsonObject inventoryJson() {
         try {
             JsonObject json = new JsonObject();
             JsonArray jInventory = new JsonArray(inventory.getInventory().size());
@@ -372,46 +381,48 @@ public class Player {
             });
             json.add("items", jInventory);
             return json;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println("err at `Player::inventoryJson()`");
         }
         return new JsonObject();
     }
-    public JsonObject equipmentJson(){
+
+    public JsonObject equipmentJson() {
         try {
             JsonObject equipmentSlots = new JsonObject();
-            if(currentWeapon != null) {
-                equipmentSlots.addProperty("melee",currentWeapon.name );
-            }else {
+            if (currentWeapon != null) {
+                equipmentSlots.addProperty("melee", currentWeapon.name);
+            } else {
                 equipmentSlots.addProperty("melee", "");
             }
-            if(helmet != null) {
-                equipmentSlots.addProperty("helmet",helmet.name );
-            }else {
-                equipmentSlots.addProperty("helmet","");
+            if (helmet != null) {
+                equipmentSlots.addProperty("helmet", helmet.name);
+            } else {
+                equipmentSlots.addProperty("helmet", "");
             }
-            if(torso != null) {
-                equipmentSlots.addProperty("torso",torso.name );
-            }else {
-                equipmentSlots.addProperty("torso","");
+            if (torso != null) {
+                equipmentSlots.addProperty("torso", torso.name);
+            } else {
+                equipmentSlots.addProperty("torso", "");
             }
-            if(legs != null) {
-                equipmentSlots.addProperty("legs",legs.name);
-            }else {
-                equipmentSlots.addProperty("legs","");
+            if (legs != null) {
+                equipmentSlots.addProperty("legs", legs.name);
+            } else {
+                equipmentSlots.addProperty("legs", "");
             }
-            if(boots != null) {
-                equipmentSlots.addProperty("boots",boots.name);
-            }else {
+            if (boots != null) {
+                equipmentSlots.addProperty("boots", boots.name);
+            } else {
                 equipmentSlots.addProperty("boots", "");
             }
             return equipmentSlots;
-        }catch (Exception e){
+        } catch (Exception e) {
             System.err.println("err at `Player::equipmentJson()`");
         }
         return new JsonObject();
     }
-    public JsonObject toJson(){
+
+    public JsonObject toJson() {
         try {
             JsonObject json = new JsonObject();
             JsonObject jSkills = new JsonObject();
@@ -427,8 +438,7 @@ public class Player {
             json.addProperty("experience", experience);
             if (activeQuest != null) {
                 json.addProperty("activeQuest", activeQuest.name);
-            }
-            else {
+            } else {
                 json.addProperty("activeQuest", "");
             }
 
@@ -436,7 +446,7 @@ public class Player {
 
             return json;
 
-            }catch (Exception e){
+        } catch (Exception e) {
             System.err.println("err at `Player::toJson()`");
         }
         return new JsonObject();

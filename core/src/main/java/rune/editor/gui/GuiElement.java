@@ -14,4 +14,7 @@ public class GuiElement {
         return 0;
     }
 
+    public void resize(float x, float y, float width, float height){
+
+    }
 }

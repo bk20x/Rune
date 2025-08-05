@@ -5,8 +5,8 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
-import org.luaj.vm2.ast.Str;
 import rune.editor.Player;
+import rune.editor.external_lib.NimLib;
 import rune.editor.magic.Spell;
 import rune.editor.npc.Npc;
 import rune.editor.entity.Entity;
@@ -27,7 +27,11 @@ public class GameData {
     public static Gson gson = new Gson();
     public static final String savePath = "json/player/save.json";
 
-    public static  <T> T objFromFile(String filePath, Class<T> classOfT) {
+    public static final NimLib preload = NimLib.Instance;
+    static {
+        System.load(NimLib.PATH);
+    }
+    public static <T> T objFromFile(String filePath, Class<T> classOfT) {
         try (Reader reader = new FileReader(filePath)) {
             return gson.fromJson(reader, classOfT);
         } catch (Exception e) {
@@ -36,46 +40,90 @@ public class GameData {
         }
     }
 
-    public static <T> T objFromString(String json, Class<T> classOfT) {return gson.fromJson(json, classOfT);}
+    public static <T> T objFromString(String json, Class<T> classOfT) {
+        return gson.fromJson(json, classOfT);
+    }
+
     public static JsonArray arrayFromFile(String filePath) {
         return objFromFile(filePath, JsonArray.class);
     }
 
-    public static void setMobValues(Entity e){
-        for (JsonElement element :  arrayFromFile("json/mobs.json")) {
-            JsonObject entityData = element.getAsJsonObject();
-            if(entityData.get("name").getAsString().equals(e.name)) {
-                e.setHealth(entityData.get("health").getAsFloat());
-                e.setDamage(entityData.get("damage").getAsFloat());
-                e.setRarity(Rarity.valueOf(entityData.get("rarity").getAsString().toUpperCase()));
-                e.setSpeed(entityData.get("speed").getAsFloat());
+    public static void setMobValues(Entity e) {
+        JsonObject entityData = objFromString(preload.queryMob(e.name), JsonObject.class);
+        e.setHealth(entityData.get("health").getAsFloat());
+        e.setDamage(entityData.get("damage").getAsFloat());
+        e.setRarity(Rarity.valueOf(entityData.get("rarity").getAsString().toUpperCase()));
+        e.setSpeed(entityData.get("speed").getAsFloat());
+
+
+    }
+
+    public static void setItemValues(Item i) {
+        JsonObject itemData = objFromString(preload.queryItem(i.name), JsonObject.class);
+        i.setType(ItemTypes.fromString(itemData.get("type").getAsString()));
+        i.setRarity(Rarity.fromString(itemData.get("rarity").getAsString()));
+        i.cost = itemData.get("cost").getAsInt();
+        switch (i.type) {
+            case WEAPON -> i.setBaseDamage(itemData.get("damage").getAsFloat());
+            case POTION -> {
+                final String effect = itemData.get("effect").getAsString().split(":")[0];
+                final int value = Integer.parseInt(itemData.get("effect").getAsString().split(":")[1]);
+                if (itemData.get("duration").getAsInt() > 0) {
+                    i.duration = itemData.get("duration").getAsInt();
+                }
+                i.setEffect(effect, value);
+            }
+            case ARMOR -> i.defense = itemData.get("defense").getAsInt();
+        }
+
+    }
+
+    public static void setSpellValues(Spell s) {
+        for (JsonElement element : arrayFromFile("json/spells.json")) {
+            JsonObject spellData = element.getAsJsonObject();
+            if (spellData.get("name").getAsString().equals(s.name)) {
+                s.type = SpellTypes.fromString(spellData.get("type").getAsString());
+                s.damage = spellData.get("damage").getAsFloat();
+                s.range = spellData.get("range").getAsFloat();
+                s.travelSpeed = spellData.get("travel speed").getAsFloat();
+                if (s.range != 0) {
+                    s.isRanged = true;
+                }
             }
         }
     }
 
-
-
-    public static void setNpcValues(Npc n){
-        for(JsonElement element : arrayFromFile("json/npcs.json")){
+    public static void setObjectValues(Entity e) {
+        new Thread(() -> {
+            for (JsonElement element : arrayFromFile("json/objects.json")) {
+                JsonObject entityData = element.getAsJsonObject();
+                if (entityData.get("name").getAsString().equals(e.name)) {
+                }
+            }
+        }).start();
+    }
+    public static void setNpcValues(Npc n) {
+        for (JsonElement element : arrayFromFile("json/npcs.json")) {
             JsonObject npcData = element.getAsJsonObject();
-            if(npcData.get("name").getAsString().equals(n.name)) {
+            if (npcData.get("name").getAsString().equals(n.name)) {
                 n.setType(NpcTypes.fromString(npcData.get("type").getAsString()));
             }
         }
     }
 
 
-    public static void setQuestValues(Quest q){
+    public static void setQuestValues(Quest q) {
         for (JsonElement element : arrayFromFile("json/quests.json")) {
             JsonObject questData = element.getAsJsonObject();
-            if(questData.get("name").getAsString().equals(q.name)) {
+            if (questData.get("name").getAsString().equals(q.name)) {
                 q.rewards = questData.get("rewards").getAsString().split(";");
                 q.objective = questData.get("objective").getAsString();
             }
         }
 
     }
-    public static void loadPlayerStats(Player player){
+
+    public static void loadPlayerStats(Player player) {
 
         JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
         int charisma = playerData.get("skills").getAsJsonObject().get("charisma").getAsInt();
@@ -88,7 +136,8 @@ public class GameData {
         player.attributeLevels.put("luck", luck);
 
     }
-    public static void loadPlayerSaveFile(Player player){
+
+    public static void loadPlayerSaveFile(Player player) {
         try {
 
 
@@ -103,29 +152,29 @@ public class GameData {
             player.maxHealth = playerData.get("max health").getAsFloat();
             player.health = playerData.get("health").getAsFloat();
 
-            JsonObject inventoryData =  objFromFile("json/player/inventory.json", JsonObject.class);
+            JsonObject inventoryData = objFromFile("json/player/inventory.json", JsonObject.class);
             JsonObject equipmentSlots = inventoryData.get("equipment slots").getAsJsonObject();
 
 
-            if(!equipmentSlots.get("melee").getAsString().isBlank()){
+            if (!equipmentSlots.get("melee").getAsString().isBlank()) {
                 player.equipWeapon(Items.Weapon(equipmentSlots.get("melee").getAsString()));
             }
-            if(!equipmentSlots.get("helmet").getAsString().isBlank()){
+            if (!equipmentSlots.get("helmet").getAsString().isBlank()) {
                 var helmet = Items.Armor(equipmentSlots.get("helmet").getAsString());
                 player.helmet = helmet;
                 player.addItem(helmet);
             }
-            if(!equipmentSlots.get("torso").getAsString().isBlank()){
+            if (!equipmentSlots.get("torso").getAsString().isBlank()) {
                 var torso = Items.Armor(equipmentSlots.get("torso").getAsString());
                 player.torso = torso;
                 player.addItem(torso);
             }
-            if(!equipmentSlots.get("legs").getAsString().isBlank()){
+            if (!equipmentSlots.get("legs").getAsString().isBlank()) {
                 var legs = Items.Armor(equipmentSlots.get("legs").getAsString());
                 player.legs = legs;
                 player.addItem(legs);
             }
-            if(!equipmentSlots.get("boots").getAsString().isBlank()){
+            if (!equipmentSlots.get("boots").getAsString().isBlank()) {
                 var boots = Items.Armor(equipmentSlots.get("boots").getAsString());
                 player.boots = boots;
                 player.addItem(boots);
@@ -134,31 +183,32 @@ public class GameData {
             loadPlayerStats(player);
             loadPlayerQuests(player);
 
-        } catch ( RuntimeException e ){
+        } catch (RuntimeException e) {
             System.err.println("Error parsing save file: " + e);
         }
     }
 
-    public static void loadPlayerQuests(Player player){
-        for (JsonElement element : arrayFromFile("json/player/journal.json")){
+    public static void loadPlayerQuests(Player player) {
+        for (JsonElement element : arrayFromFile("json/player/journal.json")) {
             JsonObject questData = element.getAsJsonObject();
             final Quest quest = new Quest(questData.get("quest").getAsString());
             System.out.println(questData.get("quest").getAsString());
             quest.complete = questData.get("complete").getAsBoolean();
+            if(questData.get("active").getAsBoolean()) {
+                player.activeQuest = quest;
+            }
             for (JsonElement entry : questData.getAsJsonArray("entries")) {
                 quest.journalEntries.put(entry.getAsJsonObject().get("date").getAsString(), entry.getAsJsonObject().get("entry").getAsString());
             }
-            player.activeQuests.add(quest);
+            player.quests.add(quest);
         }
-
-
 
 
     }
 
     @Deprecated
     @Nullable
-    public static ItemTypes getItemType(String name){
+    public static ItemTypes getItemType(String name) {
         for (JsonElement element : arrayFromFile("json/items.json")) {
             JsonObject itemData = element.getAsJsonObject();
             if (itemData.get("name").getAsString().equals(name)) {
@@ -169,67 +219,30 @@ public class GameData {
     }
 
 
-    public static void setItemValues(Item i){
-        for(JsonElement element : arrayFromFile("json/items.json")){
-            JsonObject itemData = element.getAsJsonObject();
-            if (itemData.get("name").getAsString().equals(i.name)) {
-                i.setType(ItemTypes.fromString(itemData.get("type").getAsString()));
-                i.setRarity(Rarity.fromString(itemData.get("rarity").getAsString()));
-                i.cost = itemData.get("cost").getAsInt();
-                switch (i.type){
-                    case WEAPON -> i.setBaseDamage(itemData.get("damage").getAsFloat());
-                    case POTION -> {
-                        final String effect = itemData.get("effect").getAsString().split(":")[0];
-                        final int value = Integer.parseInt(itemData.get("effect").getAsString().split(":")[1]);
-                        if (itemData.get("duration").getAsInt() > 0){
-                            i.duration = itemData.get("duration").getAsInt();
-                        }
-                        i.setEffect(effect,value);
-                    }
-                    case ARMOR -> {
-                        i.defense = itemData.get("defense").getAsInt();
-                    }
-                }
-            }
-        }
-    }
-    public static void setSpellValues(Spell s){
-        for (JsonElement element : arrayFromFile("json/spells.json")) {
-            JsonObject spellData = element.getAsJsonObject();
-            if(spellData.get("name").getAsString().equals(s.name)){
-                s.type = SpellTypes.fromString(spellData.get("type").getAsString());
-                s.damage = spellData.get("damage").getAsFloat();
-                s.range = spellData.get("range").getAsFloat();
-                s.travelSpeed = spellData.get("travel speed").getAsFloat();
-                if(s.range != 0){
-                    s.isRanged = true;
-                }
-            }
-        }
-    }
 
-    public static void setSceneValues(Scene s){
-        for(JsonElement element : arrayFromFile("json/scenes.json")){
+    public static void setSceneValues(Scene s) {
+        for (JsonElement element : arrayFromFile("json/scenes.json")) {
             JsonObject sceneData = element.getAsJsonObject();
-            if(sceneData.get("scene").getAsString().equals(s.name)){
+            if (sceneData.get("scene").getAsString().equals(s.name)) {
 
             }
         }
     }
 
-    public static void writeInventoryFile(Player player){
+    public static void writeInventoryFile(Player player) {
         JsonObject inventoryJson = player.inventoryJson();
-        try (FileOutputStream fos = new FileOutputStream("json/player/inventory.json")){
+        try (FileOutputStream fos = new FileOutputStream("json/player/inventory.json")) {
             fos.write(inventoryJson.toString().getBytes());
-        }catch (IOException e){
+        } catch (IOException e) {
             System.err.println(e);
         }
     }
-    public static void writeSaveFile(Player player){
+
+    public static void writeSaveFile(Player player) {
         JsonObject playerJson = player.toJson();
-        try (FileOutputStream fos = new FileOutputStream(savePath)){
+        try (FileOutputStream fos = new FileOutputStream(savePath)) {
             fos.write(playerJson.toString().getBytes());
-        }catch (IOException e){
+        } catch (IOException e) {
             System.err.println(e);
         }
         writeInventoryFile(player);

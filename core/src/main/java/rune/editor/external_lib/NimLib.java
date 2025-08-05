@@ -1,15 +1,16 @@
 package rune.editor.external_lib;
 
-import com.google.gson.JsonObject;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 
 public interface NimLib extends Library {
-    static final String PATH = "C:/Users/Sean/Desktop/bkexedit/dll/parser.dll";
+    String PATH = "C:\\Users\\Droop\\Desktop\\Hreload\\RuneGameh\\Rune\\dll\\preload.dll";
 
     NimLib Instance = Native.load(PATH, NimLib.class);
+    void libraryInit();
 
-    public void helloFromNim();
+    String queryMob(String elementName);
+    String queryItem(String elementName);
     void test();
-    void writeSaveFile(String data);
+
 }

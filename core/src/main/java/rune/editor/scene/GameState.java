@@ -87,40 +87,37 @@ public class GameState {
         return new Vector2(unprojected.x, unprojected.y);
     }
 
-    public void run(Renderer renderer, float dt){
-        boolean transitionComplete = transitionManager.updateTransitionState(dt,player,this);
+    public void run(Renderer renderer, float dt) {
+        boolean transitionComplete = transitionManager.updateTransitionState(dt, player, this);
 
-
-        if (camera != null) {
-            renderer.setView(camera);
-            this.renderer.setView(camera);
-            if (scene != null) {
-                scene.setView(camera);
-            }
-        }
 
         renderer.start();
-        if(isSceneActive){
+        if (isSceneActive && scene != null && player != null && camera != null) {
             scene.update();
-            scene.draw(renderer,dt);
-            if(player != null && camera != null) {
-                button.draw(renderer,camera.position.x - 200,camera.position.y - 100);
-                button.setBounds(camera.position.x - 200, camera.position.y - 100, 100, 100);
-                button.trigger(getMousePos());
-                scene.playerInteract(player);
-                if (player.isMelee) {
-                    scene.entityManager.combat(player);
-                }
-                if(transitionComplete){
-                    player.draw(renderer, dt);
-                }
-                if (!transitionManager.isTransitioning()) {
-                    checkSceneTransitions();
-                }
-                for (int i : scene.entityManager.entities.keySet()) {
-                    scene.entityManager.entities.get(i).followPlayer(player, dt);
-                }
+            renderer.setView(camera);
+            scene.setView(camera);
+
+
+
+            scene.draw(renderer, dt);
+
+            button.draw(renderer, camera.position.x - 200, camera.position.y - 100);
+            button.setBounds(camera.position.x - 200, camera.position.y - 100, 100, 100);
+            button.trigger(getMousePos());
+            scene.playerInteract(player);
+            if (player.isMelee) {
+                scene.entityManager.combat(player);
             }
+            if (transitionComplete) {
+                player.draw(renderer, dt);
+            }
+            if (!transitionManager.isTransitioning()) {
+                checkSceneTransitions();
+            }
+            for (int i : scene.entityManager.entities.keySet()) {
+                scene.entityManager.entities.get(i).followPlayer(player, dt);
+            }
+
         }
 
 
