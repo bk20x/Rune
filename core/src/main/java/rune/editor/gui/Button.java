@@ -27,6 +27,8 @@ public class Button extends GuiElement{
         font = new BitmapFont();
         upRegion = new TextureRegion(new Texture("ui/" + upStyle + ".png"));
         downRegion = new TextureRegion(new Texture("ui/" + downStyle + ".png"));
+        bounds = new Rectangle(0, 0, upRegion.getRegionWidth(), upRegion.getRegionHeight());
+
         addListener(() -> System.err.println("Button pressed: " + id));
 
 
