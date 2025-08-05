@@ -50,7 +50,7 @@ public class Button extends GuiElement{
                 isDown = false;
             }
         }
-        return -1;
+        return 0;
     }
 
 
