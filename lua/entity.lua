@@ -41,7 +41,7 @@ end
 
 
 function RandomEnts()
-    local ents = { Mobs:BlueSlime(), Mobs:GreenSlime(), Mobs:BlueSlime(),Mobs:OrangeSlime(), Mobs:PurpleSlime() }
+    local ents = { Mobs:BlueSlime(), Mobs:GreenSlime(), Mobs:BlueSlime(),Mobs:OrangeSlime(), Mobs:PurpleSlime(),Mobs:BlueSlime(), Mobs:OrangeSlime(), Mobs:OrangeSlime(),Mobs:GreenSlime(),Mobs:PurpleSlime(), Mobs:PurpleSlime() }
     for key, entity in pairs(ents) do
         entity:setDirection(Direction:Random())
         entity:setPos(math.random(0,1280 - 32),math.random(0,1280 - 32))

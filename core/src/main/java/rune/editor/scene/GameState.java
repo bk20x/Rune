@@ -35,7 +35,7 @@ public class GameState {
         transitionManager = new SceneTransitionManager();
 
         button = new Button(1,"def","def");
-
+        button.setPos(200,200);
     }
 
     public void addEntity(Entity e){
@@ -65,7 +65,7 @@ public class GameState {
             transitionManager.startTransition(targetScene, exitDirection);
         }
     }
-
+    public Renderer buttonRenderer = new Renderer();
 
     public void setTint(Color color){
         renderer.sb.setColor(color);
@@ -101,8 +101,6 @@ public class GameState {
 
             scene.draw(renderer, dt);
 
-            button.draw(renderer, camera.position.x - 200, camera.position.y - 100);
-            button.setBounds(camera.position.x - 200, camera.position.y - 100, 100, 100);
             button.trigger(getMousePos());
             scene.playerInteract(player);
             if (player.isMelee) {
@@ -123,9 +121,16 @@ public class GameState {
 
         transitionManager.renderTransitionEffect();
         renderer.stop();
-
-
-
+        if(camera != null) {
+            // buttonRenderer.start();
+            // final float buttonX = button.pos.x;
+            //final float buttonY = button.pos.y;
+            //System.out.println(buttonX);
+            //button.draw(buttonRenderer, buttonX, buttonY);
+            //button.setBounds(camera.unproject(new Vector3(buttonX, buttonY, 0)).x, camera.unproject(new Vector3(buttonX, buttonY, 0)).y, 100, 100);
+            //button.setBoundsToCam(camera);
+            //buttonRenderer.stop();
+        }
     }
 
 

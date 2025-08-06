@@ -2,11 +2,13 @@ package rune.editor.gui;
 
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
 import rune.editor.Renderer;
 
 
@@ -19,11 +21,12 @@ public class Button extends GuiElement{
     public Rectangle bounds;
     public int id;
     public boolean isDown = false;
-
+    public Vector2 pos;
     public Button(int id, String upStyle, String downStyle) {
 
 
         this.id = id;
+        this.pos = new Vector2();
         font = new BitmapFont();
         upRegion = new TextureRegion(new Texture("ui/" + upStyle + ".png"));
         downRegion = new TextureRegion(new Texture("ui/" + downStyle + ".png"));
@@ -34,10 +37,15 @@ public class Button extends GuiElement{
 
 
     }
-    public void setBounds(float x, float y, float width, float height) {
-        bounds = new Rectangle(x, y, width, height);
+    public void setPos(float x, float y){
+        pos.set(x,y);
     }
-
+    public void setBounds(float x, float y, float width, float height) {
+        bounds.set(x, y, 100, 100);
+    }
+    public void setBoundsToCam(OrthographicCamera camera){
+        setBounds(camera.unproject(new Vector3(pos.x, pos.y, 0)).x, camera.unproject(new Vector3(pos.x, pos.y, 0)).y, upRegion.getRegionWidth(), upRegion.getRegionHeight());
+    }
     @Override
     public int trigger(Vector2 mousePos){
         if(mousePos.x > bounds.x && mousePos.x < bounds.x + bounds.width && mousePos.y > bounds.y && mousePos.y < bounds.y + bounds.height){
