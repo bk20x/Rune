@@ -1,6 +1,7 @@
 package rune.editor.scene;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.math.Vector2;
@@ -10,6 +11,8 @@ import rune.editor.Renderer;
 import rune.editor.entity.Entity;
 import rune.editor.gui.Button;
 import rune.editor.gui.GuiLayout;
+
+import static rune.editor.data.GameData.writePlayerSaveFile;
 
 
 public class GameState {
@@ -36,6 +39,7 @@ public class GameState {
 
         button = new Button(1,"def","def");
         button.setPos(200,200);
+
     }
 
     public void addEntity(Entity e){
@@ -103,6 +107,9 @@ public class GameState {
 
             button.trigger(getMousePos());
             scene.playerInteract(player);
+            if(Gdx.input.isKeyPressed(Input.Keys.Y)){
+                writePlayerSaveFile(player);
+            }
             if (player.isMelee) {
                 scene.entityManager.combat(player);
             }

@@ -22,6 +22,9 @@ function Npc:New(t)
     return t
 end
 
+
+
+
 function Npc:respondTo(option)
     return self.actor:getDialogueResponseAndWalkTree(option)
 end

@@ -1,6 +1,7 @@
 {"name": "bk20",
   "posX": 600,
   "posY": 600,
+  "speed": 100,
   "max health" : 100,
   "health": 100,
   "experience": 0,

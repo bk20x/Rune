@@ -18,8 +18,11 @@ import rune.editor.system.Inventory;
 import rune.editor.types.DIRECTION;
 
 
+import java.io.IOException;
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Scanner;
 
 import static rune.editor.Game.keyBinds;
 import static rune.editor.data.GameData.loadPlayerSaveFile;
@@ -39,6 +42,7 @@ public class Player {
         attributeLevels.put("intelligence", 10);
         attributeLevels.put("charisma", 10);
         attributeLevels.put("luck", 10);
+
     }
 
 
@@ -89,7 +93,9 @@ public class Player {
         loadPlayerSaveFile(this);
         System.out.println(activeQuest);
         System.out.println(isWeaponEquipped);
-        System.out.println(helmet.name);
+        System.err.println("Attribute levels: " + attributeLevels);
+
+
     }
 
     private void input(float dt) {
@@ -142,7 +148,7 @@ public class Player {
         if (isWeaponEquipped && isMelee) {
             switch (direction) {
                 case NORTH -> {
-                    wepRec.set(getX(), getY() + 16, 32, 38);
+                    wepRec.set(getX(), getY() + 8, 32, 38);
                     if (wepRec.overlaps(mob.bounds)) {
                         mob.hurt = true;
                         wepRec.set(0, 0, 0, 0);
@@ -151,7 +157,7 @@ public class Player {
                     }
                 }
                 case WEST -> {
-                    wepRec.set(getX() - 16, getY(), 38, 32);
+                    wepRec.set(getX() - 8, getY(), 38, 32);
                     if (wepRec.overlaps(mob.bounds)) {
                         mob.hurt = true;
                         wepRec.set(0, 0, 0, 0);
@@ -160,7 +166,7 @@ public class Player {
                     }
                 }
                 case EAST -> {
-                    wepRec.set(getX() + 16, getY(), 38, 32);
+                    wepRec.set(getX() + 8, getY(), 38, 32);
                     if (wepRec.overlaps(mob.bounds)) {
                         mob.hurt = true;
                         wepRec.set(0, 0, 0, 0);
@@ -169,7 +175,7 @@ public class Player {
                     }
                 }
                 case SOUTH -> {
-                    wepRec.set(getX(), getY() - 16, 32, 38);
+                    wepRec.set(getX(), getY() - 8, 32, 38);
                     if (wepRec.overlaps(mob.bounds)) {
                         mob.hurt = true;
                         wepRec.set(0, 0, 0, 0);

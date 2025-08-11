@@ -23,11 +23,9 @@ public class GameScreen implements Screen {
     @Override
     public void show() {
 
-        renderer = new Renderer();
+        renderer =  new Renderer();
         loadLuaFile("lua/config.lua");
         loadLuaFile("lua/main.lua");
-
-
     }
 
     @Override

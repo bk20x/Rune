@@ -20,6 +20,7 @@ import rune.editor.types.Rarity;
 import rune.editor.types.SpellTypes;
 
 import java.io.*;
+import java.util.Arrays;
 
 public class GameData {
 
@@ -50,7 +51,7 @@ public class GameData {
 
     public static void setMobValues(Entity e) {
         JsonObject entityData = objFromString(preload.queryMob(e.name), JsonObject.class);
-        e.setHealth(entityData.get("health").getAsFloat());
+        e.setHealth(entityData.get("health").getAsInt());
         e.setDamage(entityData.get("damage").getAsFloat());
         e.setRarity(Rarity.valueOf(entityData.get("rarity").getAsString().toUpperCase()));
         e.setSpeed(entityData.get("speed").getAsFloat());
@@ -141,7 +142,7 @@ public class GameData {
         try {
 
 
-            JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
+            JsonObject playerData = objFromFile("json/player/save.json", JsonObject.class);
 
             String name = playerData.get("name").getAsString();
             float experience = playerData.get("experience").getAsFloat();
@@ -149,8 +150,8 @@ public class GameData {
             player.experience = experience;
             player.pos.x = playerData.get("posX").getAsFloat();
             player.pos.y = playerData.get("posY").getAsFloat();
-            player.maxHealth = playerData.get("max health").getAsFloat();
-            player.health = playerData.get("health").getAsFloat();
+            player.maxHealth = playerData.get("maxHealth").getAsFloat();
+            player.health = playerData.get("currentHealth").getAsFloat();
 
             JsonObject inventoryData = objFromFile("json/player/inventory.json", JsonObject.class);
             JsonObject equipmentSlots = inventoryData.get("equipment slots").getAsJsonObject();
@@ -184,7 +185,7 @@ public class GameData {
             loadPlayerQuests(player);
 
         } catch (RuntimeException e) {
-            System.err.println("Error parsing save file: " + e);
+            System.err.println("Error parsing save file: " + Arrays.toString(e.getStackTrace()));
         }
     }
 
@@ -238,7 +239,7 @@ public class GameData {
         }
     }
 
-    public static void writeSaveFile(Player player) {
+    public static void writePlayerSaveFile(Player player) {
         JsonObject playerJson = player.toJson();
         try (FileOutputStream fos = new FileOutputStream(savePath)) {
             fos.write(playerJson.toString().getBytes());

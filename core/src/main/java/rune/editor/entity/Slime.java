@@ -44,10 +44,10 @@ public class Slime extends Entity implements MobIface {
         this.regions = TextureRegion.split(texture, 32, 32)[0];
         this.altRegions = TextureRegion.split(texture, 32, 32)[1];
 
-        north = new Animation<TextureRegion>(0.30f, altRegions[3], altRegions[4], altRegions[5]);
-        east = new Animation<TextureRegion>(0.30f, regions[3], regions[4], regions[5]);
-        west = new Animation<TextureRegion>(0.30f, altRegions[0], altRegions[1], altRegions[2]);
-        south = new Animation<TextureRegion>(0.30f, regions[0], regions[1], regions[2]);
+        north = new Animation<>(0.30f, altRegions[3], altRegions[4], altRegions[5]);
+        east = new Animation<>(0.30f, regions[3], regions[4], regions[5]);
+        west = new Animation<>(0.30f, altRegions[0], altRegions[1], altRegions[2]);
+        south = new Animation<>(0.30f, regions[0], regions[1], regions[2]);
         hurtAnim = new Animation<>(0.40f, hurtRegions[0],hurtRegions[1],hurtRegions[2],hurtRegions[0]);
 
         this.shadow = new Texture("shadow.png");
