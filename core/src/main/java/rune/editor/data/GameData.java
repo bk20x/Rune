@@ -25,7 +25,7 @@ import java.util.Arrays;
 public class GameData {
 
 
-    public static Gson gson = new Gson();
+    public static final Gson gson = new Gson();
     public static final String savePath = "json/player/save.json";
 
     public static final NimLib preload = NimLib.Instance;
@@ -126,11 +126,11 @@ public class GameData {
 
     public static void loadPlayerStats(Player player) {
 
-        JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
-        int charisma = playerData.get("skills").getAsJsonObject().get("charisma").getAsInt();
-        int strength = playerData.get("skills").getAsJsonObject().get("strength").getAsInt();
-        int intelligence = playerData.get("skills").getAsJsonObject().get("intelligence").getAsInt();
-        int luck = playerData.get("skills").getAsJsonObject().get("luck").getAsInt();
+        final JsonObject playerData = objFromFile("json/player/player.json", JsonObject.class);
+        final int charisma = playerData.get("skills").getAsJsonObject().get("charisma").getAsInt();
+        final int strength = playerData.get("skills").getAsJsonObject().get("strength").getAsInt();
+        final int intelligence = playerData.get("skills").getAsJsonObject().get("intelligence").getAsInt();
+        final int luck = playerData.get("skills").getAsJsonObject().get("luck").getAsInt();
         player.attributeLevels.put("charisma", charisma);
         player.attributeLevels.put("strength", strength);
         player.attributeLevels.put("intelligence", intelligence);
@@ -142,10 +142,10 @@ public class GameData {
         try {
 
 
-            JsonObject playerData = objFromFile("json/player/save.json", JsonObject.class);
+            final JsonObject playerData = objFromFile("json/player/save.json", JsonObject.class);
 
-            String name = playerData.get("name").getAsString();
-            float experience = playerData.get("experience").getAsFloat();
+            final String name = playerData.get("name").getAsString();
+            final float experience = playerData.get("experience").getAsFloat();
             player.name = name;
             player.experience = experience;
             player.pos.x = playerData.get("posX").getAsFloat();
@@ -206,19 +206,6 @@ public class GameData {
 
 
     }
-
-    @Deprecated
-    @Nullable
-    public static ItemTypes getItemType(String name) {
-        for (JsonElement element : arrayFromFile("json/items.json")) {
-            JsonObject itemData = element.getAsJsonObject();
-            if (itemData.get("name").getAsString().equals(name)) {
-                return ItemTypes.fromString(itemData.get("type").getAsString());
-            }
-        }
-        return null;
-    }
-
 
 
     public static void setSceneValues(Scene s) {

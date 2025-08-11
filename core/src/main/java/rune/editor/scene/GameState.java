@@ -18,11 +18,12 @@ import static rune.editor.data.GameData.writePlayerSaveFile;
 public class GameState {
 
 
-
     public static String activeQuest;
+
     public static void setActiveQuest(String questName) {
         activeQuest = questName;
     }
+
     public Scene scene;
     public Player player;
     public final Renderer renderer;
@@ -32,23 +33,24 @@ public class GameState {
 
     public GuiLayout guiLayout;
     public Button button;
-    public GameState(){
+
+    public GameState() {
         renderer = new Renderer();
         guiLayout = new GuiLayout();
         transitionManager = new SceneTransitionManager();
 
-        button = new Button(1,"def","def");
-        button.setPos(200,200);
+        button = new Button(1, "def", "def");
+        button.setPos(200, 200);
 
     }
 
-    public void addEntity(Entity e){
+    public void addEntity(Entity e) {
         scene.entityManager.add(e);
     }
-    public void addPlayer(Player player){
+
+    public void addPlayer(Player player) {
         this.player = player;
     }
-
 
 
     public synchronized void setScene(Scene scene) {
@@ -69,14 +71,15 @@ public class GameState {
             transitionManager.startTransition(targetScene, exitDirection);
         }
     }
+
     public Renderer buttonRenderer = new Renderer();
 
-    public void setTint(Color color){
+    public void setTint(Color color) {
         renderer.sb.setColor(color);
         scene.mapRenderer.getBatch().setColor(color);
     }
 
-    public void setView(OrthographicCamera camera){
+    public void setView(OrthographicCamera camera) {
         if (this.camera == null) {
             this.camera = camera;
         }
@@ -85,7 +88,7 @@ public class GameState {
     }
 
 
-    public Vector2 getMousePos(){
+    public Vector2 getMousePos() {
         Vector3 screenCoords = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
         Vector3 unprojected = camera.unproject(screenCoords);
         return new Vector2(unprojected.x, unprojected.y);
@@ -102,12 +105,11 @@ public class GameState {
             scene.setView(camera);
 
 
-
             scene.draw(renderer, dt);
 
             button.trigger(getMousePos());
             scene.playerInteract(player);
-            if(Gdx.input.isKeyPressed(Input.Keys.Y)){
+            if (Gdx.input.isKeyPressed(Input.Keys.Y)) {
                 writePlayerSaveFile(player);
             }
             if (player.isMelee) {
@@ -128,7 +130,7 @@ public class GameState {
 
         transitionManager.renderTransitionEffect();
         renderer.stop();
-        if(camera != null) {
+        if (camera != null) {
             // buttonRenderer.start();
             // final float buttonX = button.pos.x;
             //final float buttonY = button.pos.y;
@@ -152,5 +154,7 @@ public class GameState {
         }
     }
 
-    public static GameState New(){return new GameState();}
+    public static GameState New() {
+        return new GameState();
+    }
 }
