@@ -91,9 +91,9 @@ public class Player {
 
 
         loadPlayerSaveFile(this);
-        System.out.println(activeQuest);
+        System.out.println("Active quest name: " +activeQuest.name + "Journal entries" + activeQuest.journalEntries);
         System.out.println(isWeaponEquipped);
-        System.err.println("Attribute levels: " + attributeLevels);
+        System.out.println("Attribute levels: " + attributeLevels);
 
 
     }

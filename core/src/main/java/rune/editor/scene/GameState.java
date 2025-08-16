@@ -3,17 +3,22 @@ package rune.editor.scene;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import org.luaj.vm2.ast.Str;
 import rune.editor.Player;
 import rune.editor.Renderer;
 import rune.editor.entity.Entity;
 import rune.editor.gui.Button;
 import rune.editor.gui.GuiLayout;
+import rune.editor.magic.Spell;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import static rune.editor.data.GameData.writePlayerSaveFile;
 
@@ -38,7 +43,7 @@ public class GameState {
     public Button button;
     public float stateTime;
 
-    ShaderProgram shader;
+    ShaderProgram activeShader;
     String vert,frag;
 
 
@@ -48,8 +53,8 @@ public class GameState {
         transitionManager = new SceneTransitionManager();
 
         vert = Gdx.files.internal("vert.glsl").readString();
-        frag = Gdx.files.internal("frag.glsl").readString();
-        shader = new ShaderProgram(vert, frag);
+        frag = Gdx.files.internal("bloodred_fade1.glsl").readString();
+        activeShader = new ShaderProgram(vert, frag);
     }
 
     public void addEntity(Entity e) {
@@ -101,19 +106,21 @@ public class GameState {
         Vector3 unprojected = camera.unproject(screenCoords);
         return new Vector2(unprojected.x, unprojected.y);
     }
-    boolean set = false;
+
+
+
+
     public void run(Renderer renderer, float dt) {
         stateTime += dt;
         boolean transitionComplete = transitionManager.updateTransitionState(dt, player, this);
 
         renderer.start();
-        setShader(shader);
+        applyShader();
         if (isSceneActive && scene != null && player != null && camera != null) {
-            scene.update();
             setView(camera);
+
+            scene.update();
             scene.draw(renderer, dt);
-
-
             scene.playerInteract(player);
 
             if (Gdx.input.isKeyPressed(Input.Keys.Y)) {
@@ -135,32 +142,14 @@ public class GameState {
             for (int i : scene.entityManager.entities.keySet()) {
                 scene.entityManager.entities.get(i).followPlayer(player, dt);
             }
-
         }
-
-
         transitionManager.renderTransitionEffect();
-        resetShader();
+        resetShaderToDefault();
         renderer.stop();
-
     }
 
 
-    public synchronized void resetShader() {
-        renderer.sb.setShader(null);
-        scene.mapRenderer.getBatch().setShader(null);
-    }
 
-    
-    public void setShader(ShaderProgram shader) {
-        stateTime += Gdx.graphics.getDeltaTime();
-        shader.bind();
-        shader.setUniformf("u_time", stateTime);
-        renderer.sb.setShader(shader);
-        scene.mapRenderer.getBatch().setShader(shader);
-
-
-    }
 
     private void checkSceneTransitions() {
         if (player == null || scene == null) return;
@@ -175,4 +164,51 @@ public class GameState {
     public static GameState New() {
         return new GameState();
     }
+
+
+    public void setActiveShader(ShaderProgram activeShader) {
+        if(this.activeShader != null) {
+            this.activeShader.dispose();
+            this.activeShader = null;
+        }
+        this.activeShader = activeShader;
+    }
+    public void setActiveShader(String vertex, String fragment) {
+        String vertexShader = Gdx.files.internal(vertex).readString();
+        String fragmentShader = Gdx.files.internal(fragment).readString();
+        setActiveShader(new ShaderProgram(vertexShader, fragmentShader));
+    }
+
+
+    public void setActiveShaderDbg(String vertPath, String fragPath) {
+        String vertShader = null;
+        String fragShader = null;
+        try {
+            vertShader = new String(Files.readAllBytes(Path.of( "C:\\Users\\Sean\\Desktop\\RuneGameh\\Rune\\assets\\"+vertPath)));
+            fragShader = new String(Files.readAllBytes(Path.of("C:\\Users\\Sean\\Desktop\\RuneGameh\\Rune\\assets\\" + fragPath)));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        setActiveShader(new ShaderProgram(vertShader, fragShader));
+    }
+
+    public void resetShaderToDefault() {
+        renderer.sb.setShader(null);
+        scene.mapRenderer.getBatch().setShader(null);
+    }
+
+    public void applyShader() {
+        if (activeShader != null) {
+            stateTime += Gdx.graphics.getDeltaTime();
+            activeShader.bind();
+            activeShader.setUniformf("u_time", stateTime);
+            renderer.sb.setShader(activeShader);
+            scene.mapRenderer.getBatch().setShader(activeShader);
+        }
+    }
+
+    public ShaderProgram getActiveShader() {
+        return activeShader;
+    }
+
 }

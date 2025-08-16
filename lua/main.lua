@@ -57,6 +57,7 @@ if game.player == nil then
 end
 
 
+---game:setActiveShaderDbg("vert.glsl", "frag.glsl")
 
 
 function main()

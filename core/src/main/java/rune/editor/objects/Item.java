@@ -99,7 +99,7 @@ public class Item {
 
     public Texture getTexture() {
         try {
-            return new Texture(Globals.itemPath + name + ".png");
+            return new Texture(Globals.itemAssetPath + name + ".png");
         } catch (RuntimeException e) {
             return new Texture("shadow.png");
             //return new Texture("items/" + "generic" + type.toString().toLowerCase() +".png");

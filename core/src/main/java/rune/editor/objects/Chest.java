@@ -30,7 +30,7 @@ public class Chest extends Entity {
         this.items = new Vector<>();
         this.pos = new Vector2();
 
-        this.texture = new Texture(Gdx.files.internal(Globals.objectPath + "chest.png"));
+        this.texture = new Texture(Gdx.files.internal(Globals.objectAssetPath + "chest.png"));
         this.regions = TextureRegion.split(texture, 18,14)[0];
 
         height = regions[0].getRegionHeight()/2;

@@ -3,9 +3,10 @@ package rune.editor;
 public class Globals {
 
 
-    public static String objectPath = "objects/";
-    public static String itemPath = "items/";
-    public static String weaponPath = "items/weapons/";
+    public static String objectAssetPath = "objects/";
+    public static String itemAssetPath = "items/";
+    public static String spellAssetPath = "spells/";
+    public static String weaponAssetPath = "items/weapons/";
 
 
 }

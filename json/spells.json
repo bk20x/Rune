@@ -1,9 +1,15 @@
 [
-  {"spell": "firebolt",
+  {"name": "flare",
     "type": "DESTRUCTION",
     "damage": 25,
-    "travel speed": 150,
-    "range": 200
+    "speed": 150,
+    "range": 40
+  },
+  {"name": "spark",
+    "type": "DESTRUCTION",
+    "damage": 25,
+    "speed": 175,
+    "range": 45
   }
 
 

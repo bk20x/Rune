@@ -86,8 +86,8 @@ public class GameData {
                 s.type = SpellTypes.fromString(spellData.get("type").getAsString());
                 s.damage = spellData.get("damage").getAsFloat();
                 s.range = spellData.get("range").getAsFloat();
-                s.travelSpeed = spellData.get("travel speed").getAsFloat();
-                if (s.range != 0) {
+                s.travelSpeed = spellData.get("speed").getAsFloat();
+                if (s.range > 0) {
                     s.isRanged = true;
                 }
             }
