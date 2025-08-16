@@ -42,14 +42,13 @@ public class Interop {
     }
 
     public void loadLuaFile(String filePath) {
-
-        require("lava");
         try {
+
             String luaScript = new String(Files.readAllBytes(Paths.get(filePath)));
             lua.load(luaScript);
             lua.pCall(0, 0);
         } catch (IOException e) {
-            throw new RuntimeException("Error loading script: " + e.getMessage());
+            throw new RuntimeException("Err at `Interop::loadLuaFile` " + e.getMessage());
         }
     }
 

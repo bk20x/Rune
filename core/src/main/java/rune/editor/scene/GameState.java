@@ -3,7 +3,10 @@ package rune.editor.scene;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
 import rune.editor.Player;
@@ -33,15 +36,20 @@ public class GameState {
 
     public GuiLayout guiLayout;
     public Button button;
+    public float stateTime;
+
+    ShaderProgram shader;
+    String vert,frag;
+
 
     public GameState() {
         renderer = new Renderer();
         guiLayout = new GuiLayout();
         transitionManager = new SceneTransitionManager();
 
-        button = new Button(1, "def", "def");
-        button.setPos(200, 200);
-
+        vert = Gdx.files.internal("vert.glsl").readString();
+        frag = Gdx.files.internal("frag.glsl").readString();
+        shader = new ShaderProgram(vert, frag);
     }
 
     public void addEntity(Entity e) {
@@ -72,7 +80,7 @@ public class GameState {
         }
     }
 
-    public Renderer buttonRenderer = new Renderer();
+
 
     public void setTint(Color color) {
         renderer.sb.setColor(color);
@@ -93,31 +101,34 @@ public class GameState {
         Vector3 unprojected = camera.unproject(screenCoords);
         return new Vector2(unprojected.x, unprojected.y);
     }
-
+    boolean set = false;
     public void run(Renderer renderer, float dt) {
+        stateTime += dt;
         boolean transitionComplete = transitionManager.updateTransitionState(dt, player, this);
 
-
         renderer.start();
+        setShader(shader);
         if (isSceneActive && scene != null && player != null && camera != null) {
             scene.update();
-            renderer.setView(camera);
-            scene.setView(camera);
-
-
+            setView(camera);
             scene.draw(renderer, dt);
 
-            button.trigger(getMousePos());
+
             scene.playerInteract(player);
+
             if (Gdx.input.isKeyPressed(Input.Keys.Y)) {
                 writePlayerSaveFile(player);
             }
+
             if (player.isMelee) {
                 scene.entityManager.combat(player);
             }
+
+
             if (transitionComplete) {
                 player.draw(renderer, dt);
             }
+
             if (!transitionManager.isTransitioning()) {
                 checkSceneTransitions();
             }
@@ -129,25 +140,32 @@ public class GameState {
 
 
         transitionManager.renderTransitionEffect();
+        resetShader();
         renderer.stop();
-        if (camera != null) {
-            // buttonRenderer.start();
-            // final float buttonX = button.pos.x;
-            //final float buttonY = button.pos.y;
-            //System.out.println(buttonX);
-            //button.draw(buttonRenderer, buttonX, buttonY);
-            //button.setBounds(camera.unproject(new Vector3(buttonX, buttonY, 0)).x, camera.unproject(new Vector3(buttonX, buttonY, 0)).y, 100, 100);
-            //button.setBoundsToCam(camera);
-            //buttonRenderer.stop();
-        }
+
     }
 
 
+    public synchronized void resetShader() {
+        renderer.sb.setShader(null);
+        scene.mapRenderer.getBatch().setShader(null);
+    }
+
+    
+    public void setShader(ShaderProgram shader) {
+        stateTime += Gdx.graphics.getDeltaTime();
+        shader.bind();
+        shader.setUniformf("u_time", stateTime);
+        renderer.sb.setShader(shader);
+        scene.mapRenderer.getBatch().setShader(shader);
+
+
+    }
+
     private void checkSceneTransitions() {
         if (player == null || scene == null) return;
-
-
-        if (player.pos.x < 64 && player.isMoving && player.direction == rune.editor.types.DIRECTION.WEST) {
+        if (player.pos.x < 64 && player.isMoving &&
+            player.direction == rune.editor.types.DIRECTION.WEST) {
 
             Scene newScene = new Scene();
             transitionToScene(newScene, "left");

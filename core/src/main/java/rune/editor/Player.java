@@ -32,7 +32,7 @@ import static rune.editor.types.DIRECTION.WEST;
 public class Player {
 
 
-    private final Texture textureSheet;
+    public final Texture textureSheet;
     private final Texture meleeSheet;
     private final Texture shadow;
     public final HashMap<String, Integer> attributeLevels = new HashMap<>();
@@ -351,7 +351,7 @@ public class Player {
 
     public JsonObject journalJson() {
         try {
-            JsonObject json = new JsonObject();
+            final JsonObject json = new JsonObject();
             for (Quest quest : quests) {
                 json.addProperty("quest", quest.name);
                 json.addProperty("complete", quest.complete);
@@ -373,8 +373,8 @@ public class Player {
 
     public JsonObject inventoryJson() {
         try {
-            JsonObject json = new JsonObject();
-            JsonArray jInventory = new JsonArray(inventory.getInventory().size());
+            final JsonObject json = new JsonObject();
+            final JsonArray jInventory = new JsonArray(inventory.getInventory().size());
 
 
             json.add("equipment slots", equipmentJson());
@@ -395,7 +395,7 @@ public class Player {
 
     public JsonObject equipmentJson() {
         try {
-            JsonObject equipmentSlots = new JsonObject();
+            final JsonObject equipmentSlots = new JsonObject();
             if (currentWeapon != null) {
                 equipmentSlots.addProperty("melee", currentWeapon.name);
             } else {
@@ -430,8 +430,8 @@ public class Player {
 
     public JsonObject toJson() {
         try {
-            JsonObject json = new JsonObject();
-            JsonObject jSkills = new JsonObject();
+            final JsonObject json = new JsonObject();
+            final JsonObject jSkills = new JsonObject();
             jSkills.addProperty("strength", attributeLevels.get("strength"));
             jSkills.addProperty("intelligence", attributeLevels.get("intelligence"));
             jSkills.addProperty("charisma", attributeLevels.get("charisma"));
@@ -439,8 +439,8 @@ public class Player {
             json.addProperty("name", name);
             json.addProperty("posX", pos.x);
             json.addProperty("posY", pos.y);
-            json.addProperty("max health", maxHealth);
-            json.addProperty("current health", health);
+            json.addProperty("maxHealth", maxHealth);
+            json.addProperty("currentHealth", health);
             json.addProperty("experience", experience);
             if (activeQuest != null) {
                 json.addProperty("activeQuest", activeQuest.name);
