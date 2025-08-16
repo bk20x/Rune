@@ -94,15 +94,15 @@ public class GameData {
         }
     }
 
+
     public static void setObjectValues(Entity e) {
-        new Thread(() -> {
-            for (JsonElement element : arrayFromFile("json/objects.json")) {
-                JsonObject entityData = element.getAsJsonObject();
-                if (entityData.get("name").getAsString().equals(e.name)) {
-                }
+        for (JsonElement element : arrayFromFile("json/objects.json")) {
+            JsonObject entityData = element.getAsJsonObject();
+            if (entityData.get("name").getAsString().equals(e.name)) {
             }
-        }).start();
+        }
     }
+
     public static void setNpcValues(Npc n) {
         for (JsonElement element : arrayFromFile("json/npcs.json")) {
             JsonObject npcData = element.getAsJsonObject();

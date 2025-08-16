@@ -257,9 +257,9 @@ public class Player {
     }
 
     public void completeQuest() {
-        activeQuest.complete = true;
+        GameState.resetActiveQuest();
+        activeQuest.complete(this);
         activeQuest = null;
-        GameState.activeQuest = null;
     }
 
     public void addQuest(Quest quest) {
@@ -268,14 +268,13 @@ public class Player {
 
     public void setActiveQuest(Quest quest) {
         activeQuest = quest;
-        GameState.setActiveQuest(activeQuest.name);
+        GameState.setActiveQuest(activeQuest);
     }
 
     private void die() {
         isMelee = false;
         isMoving = false;
         hitEntities.clear();
-
         if (experience > 0) {
             experience = Math.max(0, experience - 50);
         }

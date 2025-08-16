@@ -14,6 +14,7 @@ import rune.editor.entity.Entity;
 import rune.editor.gui.Button;
 import rune.editor.gui.GuiLayout;
 import rune.editor.magic.Spell;
+import rune.editor.quest.Quest;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,30 +27,22 @@ import static rune.editor.data.GameData.writePlayerSaveFile;
 public class GameState {
 
 
-    public static String activeQuest;
-
-    public static void setActiveQuest(String questName) {
-        activeQuest = questName;
-    }
-
+    public static Quest activeQuest;
     public Scene scene;
     public Player player;
     public final Renderer renderer;
     public boolean isSceneActive = true;
     public OrthographicCamera camera;
     public SceneTransitionManager transitionManager;
-
-    public GuiLayout guiLayout;
-    public Button button;
     public float stateTime;
 
     ShaderProgram activeShader;
-    String vert,frag;
+    String vert, frag;
 
 
     public GameState() {
         renderer = new Renderer();
-        guiLayout = new GuiLayout();
+
         transitionManager = new SceneTransitionManager();
 
         vert = Gdx.files.internal("vert.glsl").readString();
@@ -86,7 +79,6 @@ public class GameState {
     }
 
 
-
     public void setTint(Color color) {
         renderer.sb.setColor(color);
         scene.mapRenderer.getBatch().setColor(color);
@@ -108,14 +100,12 @@ public class GameState {
     }
 
 
-
-
     public void run(Renderer renderer, float dt) {
         stateTime += dt;
         boolean transitionComplete = transitionManager.updateTransitionState(dt, player, this);
 
         renderer.start();
-        applyShader();
+        //applyShader();
         if (isSceneActive && scene != null && player != null && camera != null) {
             setView(camera);
 
@@ -149,8 +139,6 @@ public class GameState {
     }
 
 
-
-
     private void checkSceneTransitions() {
         if (player == null || scene == null) return;
         if (player.pos.x < 64 && player.isMoving &&
@@ -161,18 +149,16 @@ public class GameState {
         }
     }
 
-    public static GameState New() {
-        return new GameState();
-    }
 
 
     public void setActiveShader(ShaderProgram activeShader) {
-        if(this.activeShader != null) {
+        if (this.activeShader != null) {
             this.activeShader.dispose();
             this.activeShader = null;
         }
         this.activeShader = activeShader;
     }
+
     public void setActiveShader(String vertex, String fragment) {
         String vertexShader = Gdx.files.internal(vertex).readString();
         String fragmentShader = Gdx.files.internal(fragment).readString();
@@ -181,10 +167,10 @@ public class GameState {
 
 
     public void setActiveShaderDbg(String vertPath, String fragPath) {
-        String vertShader = null;
-        String fragShader = null;
+        String vertShader;
+        String fragShader;
         try {
-            vertShader = new String(Files.readAllBytes(Path.of( "C:\\Users\\Sean\\Desktop\\RuneGameh\\Rune\\assets\\"+vertPath)));
+            vertShader = new String(Files.readAllBytes(Path.of("C:\\Users\\Sean\\Desktop\\RuneGameh\\Rune\\assets\\" + vertPath)));
             fragShader = new String(Files.readAllBytes(Path.of("C:\\Users\\Sean\\Desktop\\RuneGameh\\Rune\\assets\\" + fragPath)));
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -209,6 +195,18 @@ public class GameState {
 
     public ShaderProgram getActiveShader() {
         return activeShader;
+    }
+
+    public static GameState New() {
+        return new GameState();
+    }
+
+
+    public static void setActiveQuest(Quest quest) {
+        activeQuest = quest;
+    }
+    public static void resetActiveQuest() {
+        activeQuest = null;
     }
 
 }
