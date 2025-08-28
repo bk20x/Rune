@@ -7,16 +7,11 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.glutils.ShaderProgram;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import org.luaj.vm2.ast.Str;
 import rune.editor.Player;
 import rune.editor.Renderer;
 import rune.editor.entity.Entity;
-import rune.editor.gui.Button;
-import rune.editor.gui.GuiLayout;
-import rune.editor.magic.Spell;
 import rune.editor.quest.Quest;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -105,7 +100,7 @@ public class GameState {
         boolean transitionComplete = transitionManager.updateTransitionState(dt, player, this);
 
         renderer.start();
-        //applyShader();
+        applyShader();
         if (isSceneActive && scene != null && player != null && camera != null) {
             setView(camera);
 
@@ -121,11 +116,9 @@ public class GameState {
                 scene.entityManager.combat(player);
             }
 
-
             if (transitionComplete) {
                 player.draw(renderer, dt);
             }
-
             if (!transitionManager.isTransitioning()) {
                 checkSceneTransitions();
             }
@@ -134,7 +127,6 @@ public class GameState {
             }
         }
         transitionManager.renderTransitionEffect();
-        resetShaderToDefault();
         renderer.stop();
     }
 
@@ -152,10 +144,6 @@ public class GameState {
 
 
     public void setActiveShader(ShaderProgram activeShader) {
-        if (this.activeShader != null) {
-            this.activeShader.dispose();
-            this.activeShader = null;
-        }
         this.activeShader = activeShader;
     }
 
@@ -181,6 +169,7 @@ public class GameState {
     public void resetShaderToDefault() {
         renderer.sb.setShader(null);
         scene.mapRenderer.getBatch().setShader(null);
+        this.activeShader = null;
     }
 
     public void applyShader() {
@@ -200,8 +189,6 @@ public class GameState {
     public static GameState New() {
         return new GameState();
     }
-
-
     public static void setActiveQuest(Quest quest) {
         activeQuest = quest;
     }

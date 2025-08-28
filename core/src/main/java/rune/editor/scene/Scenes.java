@@ -8,7 +8,7 @@ public class Scenes {
 
 
 
-
+    public static Scene Intro(){return new Scene("Intro");}
     public static DungeonMap Dungeon(String name){
         return new DungeonMap(name);
     }

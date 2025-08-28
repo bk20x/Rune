@@ -22,25 +22,18 @@ public class Slime extends Entity implements MobIface {
     private final Animation<TextureRegion> east;
     private final Animation<TextureRegion> west;
     private final Animation<TextureRegion> south;
-    private Animation<TextureRegion> hurtAnim;
-    private Texture hurtTexture;
-    private TextureRegion[] hurtRegions;
+    private final Animation<TextureRegion> hurtAnim;
     private final TextureRegion[] regions;
     private final TextureRegion[] altRegions;
+    private final Texture shadow;
 
-    private Texture shadow;
     public Slime(String color){
+        super(color + "_slime",EntityTypes.MOB);
         this.name = color + "_slime";
         GameData.setMobValues(this);
-        this.direction = DIRECTION.SOUTH;
-        this.pos = new Vector2();
         this.bounds = new Rectangle(0,0,32,32);
-        this.id = basenum++;
-        this.type = EntityTypes.MOB;
 
         this.texture = new Texture("entities" + "/" + name + ".png");
-        this.hurtTexture = new Texture("entities" + "/" + name + "hurt.png");
-        this.hurtRegions = TextureRegion.split(hurtTexture, 32, 32)[0];
         this.regions = TextureRegion.split(texture, 32, 32)[0];
         this.altRegions = TextureRegion.split(texture, 32, 32)[1];
 
@@ -48,7 +41,10 @@ public class Slime extends Entity implements MobIface {
         east = new Animation<>(0.30f, regions[3], regions[4], regions[5]);
         west = new Animation<>(0.30f, altRegions[0], altRegions[1], altRegions[2]);
         south = new Animation<>(0.30f, regions[0], regions[1], regions[2]);
-        hurtAnim = new Animation<>(0.40f, hurtRegions[0],hurtRegions[1],hurtRegions[2],hurtRegions[0]);
+
+        final Texture hurtTexture = new Texture("entities" + "/" + name + "hurt.png");
+        final TextureRegion[] hurtRegions = TextureRegion.split(hurtTexture, 32, 32)[0];
+        hurtAnim = new Animation<>(0.40f, hurtRegions[0], hurtRegions[1], hurtRegions[2], hurtRegions[0]);
 
         this.shadow = new Texture("shadow.png");
         this.range = new Circle(pos.x,pos.y,regions[0].getRegionWidth() * 2);

@@ -1,5 +1,6 @@
 package rune.editor;
 
+
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Texture;
@@ -18,11 +19,10 @@ import rune.editor.system.Inventory;
 import rune.editor.types.DIRECTION;
 
 
-import java.io.IOException;
-import java.time.Year;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Scanner;
+
 
 import static rune.editor.Game.keyBinds;
 import static rune.editor.data.GameData.loadPlayerSaveFile;
@@ -140,6 +140,8 @@ public class Player {
     public Rectangle wepRec = new Rectangle(0, 0, 32, 32);
 
     public boolean hitMob(Entity mob) {
+
+
         wepRec.set(0, 0, 0, 0);
         if (hitEntities.contains(mob.id())) {
             return false;

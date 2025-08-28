@@ -15,11 +15,7 @@ public class SceneTransitionManager {
         FADE_IN
     }
 
-    public enum ManipType{
-        ZOOM_IN,
-        ZOOM_OUT,
-        ROTATE
-    }
+
 
     public TransitionState currentState = TransitionState.NONE;
     public float alpha = 0f;
@@ -96,21 +92,11 @@ public class SceneTransitionManager {
                 }
 
 
-
-
         }
     }
 
 
-    public void beginManipulateCamera(OrthographicCamera camera, ManipType manipType) {
-        ManipType manip = manipType;
 
-
-
-
-
-
-    }
 
 
 
