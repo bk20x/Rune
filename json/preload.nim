@@ -21,7 +21,7 @@ proc jsonToTable(jsonData, accessor : string): Table[string,JsonNode] =
   
 macro initData() =
   result = newStmtList()
-  const types = staticRead("types.txt").split("\r\n")
+  const types = staticRead("types.txt").split("\n")
   
   types.each line:
     let

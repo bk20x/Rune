@@ -10,6 +10,7 @@ import com.badlogic.gdx.math.Vector3;
 import rune.editor.Player;
 import rune.editor.Renderer;
 import rune.editor.entity.Entity;
+import rune.editor.net.Client;
 import rune.editor.quest.Quest;
 
 import java.io.IOException;
@@ -40,9 +41,9 @@ public class GameState {
 
         transitionManager = new SceneTransitionManager();
 
-        vert = Gdx.files.internal("vert.glsl").readString();
-        frag = Gdx.files.internal("bloodred_fade1.glsl").readString();
-        activeShader = new ShaderProgram(vert, frag);
+        //vert = Gdx.files.internal("vert.glsl").readString();
+        //frag = Gdx.files.internal("bloodred_fade1.glsl").readString();
+        //activeShader = new ShaderProgram(vert, frag);
     }
 
     public void addEntity(Entity e) {
@@ -53,12 +54,13 @@ public class GameState {
         this.player = player;
     }
 
-
+    Client client = new Client("127.0.0.1", 8080);
     public synchronized void setScene(Scene scene) {
         isSceneActive = false;
         renderer.flush();
         if (player != null) {
             player.lastEntityKilled = null;
+            player.currentScene = scene.name;
         }
         if (this.scene != null) {
             this.scene.dispose();
@@ -100,7 +102,8 @@ public class GameState {
         boolean transitionComplete = transitionManager.updateTransitionState(dt, player, this);
 
         renderer.start();
-        applyShader();
+
+        //applyShader();
         if (isSceneActive && scene != null && player != null && camera != null) {
             setView(camera);
 
@@ -111,6 +114,10 @@ public class GameState {
             if (Gdx.input.isKeyPressed(Input.Keys.Y)) {
                 writePlayerSaveFile(player);
             }
+
+            new Thread(() -> {
+                client.start(player);
+            }).start();
 
             if (player.isMelee) {
                 scene.entityManager.combat(player);

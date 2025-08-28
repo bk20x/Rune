@@ -62,11 +62,11 @@ public class Player {
     public Circle range;
 
     public ArrayList<Quest> quests;
-
     public Quest activeQuest;
     public Entity lastEntityKilled;
 
     public String name;
+    public String currentScene;
     private final ArrayList<Integer> hitEntities = new ArrayList<>();
     public Item currentWeapon;
     public Item torso;
@@ -457,5 +457,20 @@ public class Player {
             System.err.println("err at `Player::toJson()`");
         }
         return new JsonObject();
+    }
+
+    public JsonObject statusJson(){
+        final JsonObject json = new JsonObject();
+        json.addProperty("name", name);
+        json.addProperty("posX", pos.x);
+        json.addProperty("posY", pos.y);
+        json.addProperty("health", health);
+        return json;
+    }
+    public JsonObject syncJson(){
+        final JsonObject json = new JsonObject();
+        json.addProperty("activeScene",currentScene);
+        json.add("player", statusJson());
+        return json;
     }
 }
