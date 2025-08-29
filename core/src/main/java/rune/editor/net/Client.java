@@ -4,10 +4,7 @@ import rune.editor.GameScreen;
 import rune.editor.Player;
 import rune.editor.scene.GameState;
 
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-import java.net.SocketTimeoutException;
+import java.net.*;
 import java.nio.charset.StandardCharsets;
 
 public class Client {
@@ -17,18 +14,23 @@ public class Client {
     private final int port;
     private static final int TIMEOUT = 5000;
     public boolean connected = false;
-
+    public boolean shouldRun = true;
+    private DatagramSocket socket;
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
+        try {
+            socket = new DatagramSocket(6767);
+        } catch (SocketException e) {
+            throw new RuntimeException(e);
+        }
     }
-
+    boolean started = false;
     public void start(Player player) {
-        try (DatagramSocket socket = new DatagramSocket()) {
+        try {
             socket.setSoTimeout(TIMEOUT);
             InetAddress address = InetAddress.getByName(host);
-            String message = "start!" + player.statusJson();
-
+            String message = "" + player.statusJson();
 
             byte[] sendBuffer = message.getBytes(StandardCharsets.UTF_8);
             DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, address, port);
@@ -54,5 +56,12 @@ public class Client {
             e.printStackTrace();
         }
     }
-
+    public void stop(){
+        shouldRun = false;
+    }
+    public void run(Player player){
+        if(shouldRun){
+            start(player);
+        }
+    }
 }

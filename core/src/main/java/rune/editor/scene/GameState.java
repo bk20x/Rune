@@ -96,7 +96,10 @@ public class GameState {
         return new Vector2(unprojected.x, unprojected.y);
     }
 
-
+    Player p2 = new Player();
+    {
+        p2.name = "yoben";
+    }
     public void run(Renderer renderer, float dt) {
         stateTime += dt;
         boolean transitionComplete = transitionManager.updateTransitionState(dt, player, this);
@@ -114,13 +117,13 @@ public class GameState {
             if (Gdx.input.isKeyPressed(Input.Keys.Y)) {
                 writePlayerSaveFile(player);
             }
-
+            p2.draw(renderer, dt);
             new Thread(() -> {
-                client.start(player);
+                client.run(player);
             }).start();
 
             if (player.isMelee) {
-                scene.entityManager.combat(player);
+                scene.entityManager.combat(p2);
             }
 
             if (transitionComplete) {
