@@ -19,16 +19,17 @@ var
 
 
 proc acceptJoin(packet: sink string, ip: sink IpAddress, port: sink Port): -> void =
-  if users.len < 2 and users.len > 0:
-    each users, user:
-      if user.player.name != packet[5..^1]:
-        player <- parseJson(packet[5..^1]).to Player
-        users.add (player, ip, port)
-        echo "Player joined: ", player
-  else:
-    player <- parseJson(packet[5..^1]).to Player
-    users.add (player, ip, port)
-    echo "Player joined: ", player
+  if users.len < 2:
+    if users.len > 0:
+      each users, user:
+        if user.player.name != packet[5..^1]:
+          player <- parseJson(packet[5..^1]).to Player
+          users.add (player, ip, port)
+          echo "Player joined: ", player
+    else:
+      player <- parseJson(packet[5..^1]).to Player
+      users.add (player, ip, port)
+      echo "Player joined: ", player
       
 
 
