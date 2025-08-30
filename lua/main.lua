@@ -53,6 +53,7 @@ end
 
 if game.player == nil then
     player = Player:New()
+    player:loadSave()
     game:addPlayer(player)
 end
 

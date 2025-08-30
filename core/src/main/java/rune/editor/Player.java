@@ -90,14 +90,15 @@ public class Player {
         range = new Circle(pos.x, pos.y, 32);
 
 
-        loadPlayerSaveFile(this);
        // System.out.println("Active quest name: " +activeQuest.name + "Journal entries" + activeQuest.journalEntries);
        // System.out.println(isWeaponEquipped);
        // System.out.println("Attribute levels: " + attributeLevels);
 
 
     }
-
+    public void loadSave(){
+        loadPlayerSaveFile(this);
+    }
     private void input(float dt) {
         isMoving = false;
         if (!isMelee) {

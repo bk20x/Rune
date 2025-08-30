@@ -23,14 +23,14 @@ public class Session {
 
     public void run(){
         if(client.getLastMessage() != null){
-            if(client.getLastMessage().equalsIgnoreCase("")){
-
+            if(client.getLastMessage().equalsIgnoreCase("peering")){
+                //createPeer(cli);
             }
         }
 
 
     }
-    public void createPeer(){
+    public void createPeer(String packet){
         if(peering){
             try {
 
