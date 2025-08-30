@@ -41,10 +41,11 @@ public class GameState {
 
         transitionManager = new SceneTransitionManager();
 
-        //vert = Gdx.files.internal("vert.glsl").readString();
-        //frag = Gdx.files.internal("bloodred_fade1.glsl").readString();
-        //activeShader = new ShaderProgram(vert, frag);
+        // Start the client thread
+
     }
+
+
 
     public void addEntity(Entity e) {
         scene.entityManager.add(e);
@@ -55,6 +56,7 @@ public class GameState {
     }
 
     Client client = new Client("127.0.0.1", 8080);
+
     public synchronized void setScene(Scene scene) {
         isSceneActive = false;
         renderer.flush();
@@ -96,10 +98,7 @@ public class GameState {
         return new Vector2(unprojected.x, unprojected.y);
     }
 
-    Player p2 = new Player();
-    {
-        p2.name = "yoben";
-    }
+
     public void run(Renderer renderer, float dt) {
         stateTime += dt;
         boolean transitionComplete = transitionManager.updateTransitionState(dt, player, this);
@@ -117,13 +116,12 @@ public class GameState {
             if (Gdx.input.isKeyPressed(Input.Keys.Y)) {
                 writePlayerSaveFile(player);
             }
-            p2.draw(renderer, dt);
-            new Thread(() -> {
-                client.run(player);
-            }).start();
+            if(!client.clientThreadRunning){
+                client.startClientThread(player);
+            }
 
             if (player.isMelee) {
-                scene.entityManager.combat(p2);
+                scene.entityManager.combat(player);
             }
 
             if (transitionComplete) {

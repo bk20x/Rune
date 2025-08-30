@@ -65,7 +65,9 @@ public class GameScreen implements Screen {
         if (game != null && game.interop != null) {
             game.interop.dispose();
         }
-        gameState.scene.dispose();
+        if (gameState.scene != null) {
+            gameState.scene.dispose();
+        }
     }
 
     public void loadLuaFile(String filePath) {

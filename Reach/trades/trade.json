@@ -1,0 +1,24 @@
+{"from":"bk20x",
+  "timestamp": 1756505507,
+  "offer": 250,
+  "items": [ {"name" : "gold_sword",
+                "amount": 2,
+               "prototype":{
+                "lispPackage":"trades",
+                "lispClass": "item"
+               }
+              },
+              {"name" : "potion_of_goop",
+               "amount": 7,
+               "prototype":{
+                "lispPackage":"trades",
+                "lispClass": "item"
+               }
+              }
+  ],
+  "prototype": {
+    "lispPackage": "trades",
+    "lispClass": "trade"
+  }  
+}
+
